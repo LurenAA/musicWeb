@@ -5,6 +5,9 @@ const HommRecommend = () => import('components/home-page/recommend/recommend')
 const HommSingers = () => import('components/home-page/singers/singers')
 const HommMv = () => import('components/home-page/mv/mv')
 const HommToplist = () => import('components/home-page/toplist/toplist')
+const FriendsPage = () => import('components/friends-page/friends-page')
+const musicPage = () => import('components/music-page/music-page')
+const userPage = () => import('components/user-page/user-page')
 
 Vue.use(Router)
 
@@ -17,23 +20,43 @@ export default new Router({
     },
     {
       path: '/home',
-      name: 'HomePage',
+      name: 'home-page',
+      redirect: '/home/recommend',
       component: HomePage,
       children: [
         {
+          name: 'home-recommend',
           path: 'recommend',
           component: HommRecommend
         }, {
+          name: 'home-singers',
           path: 'singers',
           component: HommSingers
         }, {
+          name: 'home-toplist',
           path: 'toplist',
           component: HommToplist
         }, {
+          name: 'home-mv',
           path: 'mv',
           component: HommMv
         }
       ]
+    },
+    {
+      path: '/friends',
+      name: 'friends-page',
+      component: FriendsPage
+    },
+    {
+      path: '/music',
+      name: 'music-page',
+      component: musicPage
+    },
+    {
+      path: '/user',
+      name: 'user-page',
+      component: userPage
     }
   ]
 })

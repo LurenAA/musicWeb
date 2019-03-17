@@ -27,7 +27,7 @@ export default {
     height $size(54)
     line-height $size(54)
     display flex
-    margin-bottom 5px
+    margin-bottom 4px
     li
       flex 1
       height 100%
@@ -38,7 +38,7 @@ export default {
         display inline-block
         font-size $font-size-medium
       &.router-link-active
-        color $selected-color
+        color $selected-tabs-color
         span
-          border-bottom 4px solid $selected-color
+          border-bottom 4px solid $selected-tabs-color
 </style>
