@@ -1,5 +1,5 @@
 <template>
-  <ul class = 'container' @click.stop = 'func'>
+  <ul class = 'container'>
     <router-link tag = 'li' to = '/home/recommend' :class = '{activePage: currentPage === 0}'>
       <div class = 'icon-wrapper'>
         <i class = 'iconfont'>&#xe64e;</i>
@@ -35,16 +35,18 @@ export default {
       currentPage: 0
     }
   },
+  watch: {
+    '$route': 'getPath'
+  },
   methods: {
-    func: function () {
-      let key = this.$route.name.substring(0, 4)
-      if (key === 'home') {
+    getPath: function (newVal) {
+      if (newVal.fullPath.indexOf('home') !== -1) {
         this.currentPage = 0
-      } else if (key === 'musi') {
+      } else if (newVal.fullPath.indexOf('music') !== -1) {
         this.currentPage = 1
-      } else if (key === 'frie') {
+      } else if (newVal.fullPath.indexOf('friend') !== -1) {
         this.currentPage = 2
-      } else if (key === 'user') {
+      } else {
         this.currentPage = 3
       }
     }

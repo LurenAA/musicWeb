@@ -1,17 +1,30 @@
 <template>
   <div class = 'container'>
-    5
+    <slider v-if = 'sliderFlag' :slider = slider></slider>
   </div>
 </template>
 
 <script>
 import json from 'api/json.js'
+import slider from 'base/slider/slider'
 export default {
   name: 'recommend',
+  data () {
+    return {
+      slider: [],
+      sliderFlag: false
+    }
+  },
   mounted () {
-    json('http://localhost:3000', 'GET').then(res => {
-      console.log(res.responseText)
+    json('http://localhost:3000/home', 'GET').then(res => {
+      let x = JSON.parse(res)
+      console.log(x)
+      this.slider = x.focus.data.content
+      this.sliderFlag = true
     })
+  },
+  components: {
+    slider
   }
 }
 </script>
