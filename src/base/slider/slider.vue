@@ -1,11 +1,15 @@
 <template>
   <div ref = 'slider' class = 'slider'>
     <ul ref = 'slider-group'>
-      <li v-for = '(item, index) in slider' :key = 'index'>
-        <img :src = 'item.pic_info.url'>
+      <li v-for = '(item, index) in slider' :key = 'index' >
+        <img :src = 'item.pic_info.url' @click = 'goOut(item)'>
       </li>
     </ul>
-    <div class = 'dots'></div>
+    <div class = 'dots'>
+      <span v-for = '(item, index) in slider' :key = 'index' class = 'dot'
+       :class = '{active: curPag === index}'
+      ></span>
+    </div>
   </div>
 </template>
 
@@ -14,6 +18,11 @@ import scroll from 'base/scroll/scroll'
 import BScroll from 'better-scroll'
 export default {
   name: 'slider',
+  data () {
+    return {
+      curPag: 0
+    }
+  },
   components: {
     scroll
   },
@@ -26,12 +35,42 @@ export default {
       }
       totalWidth += 2 * children[0].clientWidth
       this.$refs['slider-group'].style.width = `${totalWidth}px`
+    },
+    _initSlider () {
       this.scroll = new BScroll(this.$refs.slider, {
         scrollX: true,
+        scrollY: false,
+        momentum: false,
+        click: true,
         snap: {
-          loop: true
+          loop: true,
+          threshold: 0.3
         }
       })
+      this.scroll.on('scrollEnd', () => {
+        this.curPag = this.scroll.getCurrentPage().pageX
+      })
+      this.autoPlay()
+      this.scroll.on('touchEnd', () => {
+        this.autoPlay()
+      })
+    },
+    autoPlay () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.scroll.next()
+        this.autoPlay()
+      }, 3000)
+    },
+    refresh () {
+      this.conputeSliderWidth()
+      this.scroll.refresh()
+    },
+    goOut (item) {
+      window.location.href = `https://y.qq.com/w/album.html?al
+        bummid=${item.jump_info.url}&ADTAG=myqq&from=myqq&channel=10007100`
     }
   },
   props: {
@@ -45,6 +84,7 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.conputeSliderWidth()
+      this._initSlider()
     })
   }
 }
@@ -56,6 +96,7 @@ export default {
     padding-bottom 40%
     height 0
     overflow hidden
+    position relative
     ul
       list-style none
       white-space nowrap
@@ -66,4 +107,20 @@ export default {
         display inline-block
         img
           width 100%
+    .dots
+      position absolute
+      bottom 18px
+      left 0
+      right 0
+      text-align center
+      font-size: 0
+      .dot
+        height 8px
+        width 8px
+        display inline-block
+        margin 0 4px
+        border-radius 50%
+        background-color rgba(0,0,0,0.3)
+        &.active
+          background-color #fff
 </style>
