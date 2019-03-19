@@ -60,7 +60,8 @@
 
 <script>
 import json from 'api/json.js'
-import slider from 'base/slider/slider'
+// import slider from 'base/slider/slider'
+import slider from 'base/ownSlider/ownSlider'
 export default {
   name: 'recommend',
   data () {

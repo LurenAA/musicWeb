@@ -1,0 +1,90 @@
+<template>
+  <div ref = 'slider' class = 'slider'>
+    <ul ref = 'slider-group'>
+      <li v-for = '(item, index) in slider' :key = 'index' >
+        <img :src = 'item.pic_info.url' @click = 'goOut(item)'>
+      </li>
+    </ul>
+    <div class = 'dots'>
+      <span v-for = '(item, index) in slider' :key = 'index' class = 'dot'
+       :class = '{active: curPag === index}'
+      ></span>
+    </div>
+  </div>
+</template>
+
+<script>
+import MinScroll from 'common/js/min-scroll/index'
+export default {
+  name: 'slider',
+  data () {
+    return {
+      curPag: 0
+    }
+  },
+  methods: {
+    conputeSliderWidth () {
+      let children = this.$refs['slider-group'].children
+      let totalWidth = 0
+      for (let x = 0; x < children.length; x++) {
+        totalWidth += children[0].clientWidth
+      }
+      totalWidth += 2 * children[0].clientWidth
+      this.$refs['slider-group'].style.width = `${totalWidth}px`
+    },
+    goOut (item) {
+      window.location.href = `https://y.qq.com/w/album.html?al
+        bummid=${item.jump_info.url}&ADTAG=myqq&from=myqq&channel=10007100`
+    }
+  },
+  props: {
+    slider: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.conputeSliderWidth()
+      this.wrapper = new MinScroll(this.$refs.slider)
+    })
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+  .slider
+    width 100%
+    padding-bottom 40%
+    height 0
+    overflow hidden
+    position relative
+    ul
+      list-style none
+      white-space nowrap
+      position relative
+      li
+        width 100vw
+        height 39.8vw
+        display inline-block
+        img
+          width 100%
+    .dots
+      position absolute
+      bottom 18px
+      left 0
+      right 0
+      text-align center
+      font-size: 0
+      .dot
+        height 8px
+        width 8px
+        display inline-block
+        margin 0 4px
+        border-radius 50%
+        background-color rgba(0,0,0,0.3)
+        &.active
+          background-color #fff
+</style>
