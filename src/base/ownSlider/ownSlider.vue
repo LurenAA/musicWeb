@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import MinScroll from 'common/js/min-scroll/index'
+import MScroll from 'common/js/min-better-scroll'
 export default {
   name: 'slider',
   data () {
@@ -48,7 +48,7 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.conputeSliderWidth()
-      this.wrapper = new MinScroll(this.$refs.slider)
+      this.MScroll = new MScroll(this.$refs.slider)
     })
   }
 }

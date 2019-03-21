@@ -12,7 +12,7 @@ export default function json (url, methods) {
       let timer = setTimeout(() => {
         xhr.abort()
         xhr.removeEventListener('readystatechange', fn)
-      }, 5000)
+      }, 15000)
       xhr.open(methods, url, true)
       xhr.addEventListener('readystatechange', fn)
       xhr.send()
