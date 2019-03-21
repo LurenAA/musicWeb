@@ -2,6 +2,7 @@ import { warn } from './util/debug'
 import { initMethods } from './scroll/init'
 import { initSnapMethods } from './scroll/snap'
 import { initEventMethods } from './scroll/event'
+import { initCoreMethods } from './scroll/core'
 /* options =  {
   loop
   threshold
@@ -28,3 +29,4 @@ export default class MinScroll {
 initMethods(MinScroll)
 initSnapMethods(MinScroll)
 initEventMethods(MinScroll)
+initCoreMethods(MinScroll)

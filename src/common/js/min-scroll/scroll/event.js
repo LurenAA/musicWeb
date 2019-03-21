@@ -4,7 +4,7 @@ export function initEventMethods (MinScroll) {
       this._events[type] = []
     }
     let _this = this
-    this._event[type].push({fn, caller: _this})
+    this._events[type].push({fn: fn, caller: _this})
   }
 
   MinScroll.prototype.off = function (type, fn) {
@@ -35,7 +35,7 @@ export function initEventMethods (MinScroll) {
     for (let x = 0; x < events.length; x++) {
       let {fn, caller} = events[x]
       if (fn) {
-        fn.apply(caller)
+        fn.apply(caller, [].slice.call(arguments, 1))
       }
     }
   }

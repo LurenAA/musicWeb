@@ -3,15 +3,15 @@ export function initSnapMethods (MinScroll) {
     if (this.options.loop) {
       let children = this.scroller.children
       if (children.length > 1) {
-        this.scroller.prepend(children[0].cloneNode(true))
-        this.scroller.append(children[children.length - 1].cloneNode(true))
+        this.scroller.append(children[0].cloneNode(true))
+        this.scroller.prepend(children[children.length - 2].cloneNode(true))
       } else {
         this.options.loop = false
       }
     }
 
-    this.on('refresh', () => {
-
+    this.on('refresh', function () {
+      console.log('refresh')
     })
 
     this.on('scrollEnd', () => {
