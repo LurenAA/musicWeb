@@ -6,7 +6,8 @@ options:{
   moveLimitDistance: 15  最小拖动距离，防止误触'
   ifMomentum: true  是否开启惯性
   momentumDistance: 100
-  momentumTime: 200
+  momentumTime: 200,
+  momentumDeceleration: 0.015
 }
 */
 

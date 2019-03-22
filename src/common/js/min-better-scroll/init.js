@@ -2,8 +2,9 @@ import warn from './warn'
 const defaultOptions = {
   moveLimitDistance: 15,
   ifMomentum: true,
-  momentumDistance: 100,
-  momentumTime: 200
+  momentumDistance: 150,
+  momentumTime: 200,
+  momentumDeceleration: 0.015
 }
 
 export default function initMixin (MScroll) {

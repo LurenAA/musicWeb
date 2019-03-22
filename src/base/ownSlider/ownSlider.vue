@@ -29,7 +29,7 @@ export default {
       for (let x = 0; x < children.length; x++) {
         totalWidth += children[0].clientWidth
       }
-      totalWidth += 2 * children[0].clientWidth
+      // totalWidth += 2 * children[0].clientWidth
       this.$refs['slider-group'].style.width = `${totalWidth}px`
     },
     goOut (item) {
