@@ -6,13 +6,13 @@ import router from './router'
 import fastClick from 'fastclick'
 
 import 'babel-polyfill'
-import VConsole from 'vconsole'
+// import VConsole from 'vconsole'
 
 import 'common/css/reset.css'
 import 'common/css/icons.styl'
 
-/* eslint-disable no-unused-vars */
-let vconsole = new VConsole()
+// /* eslint-disable no-unused-vars */
+// let vconsole = new VConsole()
 Vue.config.productionTip = false
 fastClick.attach(document.body)
 

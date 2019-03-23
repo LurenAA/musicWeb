@@ -7,7 +7,7 @@ export default function eventMixin (MScroll) {
 
     function margic () {
       _this.removeEventListener(type, margic)
-      fn.apply(_this, [].splice.call(arguments, 1))
+      fn.apply(_this, [].slice.call(arguments, 1))
     }
     let func = once ? margic : fn
     this._events[type].push({
@@ -34,7 +34,7 @@ export default function eventMixin (MScroll) {
     }
     for (let i = 0; i < this._events[type].length; i++) {
       let {callee, fn} = this._events[type][i]
-      fn.apply(callee, [].splice.call(arguments, 1))
+      fn.apply(callee, [].slice.call(arguments, 1))
     }
   }
 }

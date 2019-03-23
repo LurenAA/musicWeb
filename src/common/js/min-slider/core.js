@@ -118,7 +118,7 @@ export default function coreMixin (MScroll) {
   }
 
   MScroll.prototype.scrollTo = function (x, time = 0, cubic = '') {
-    if (!this.isInTransition && time !== 0) {
+    if (time !== 0) {
       this.isInTransition = true
     }
     // console.log(this.isInTransition, time)
@@ -129,14 +129,14 @@ export default function coreMixin (MScroll) {
   }
 
   MScroll.prototype._transitionEnd = function (e) {
-    if (!this.isInTransition || e.target !== this.scroller) {
-      console.log(e.target)
-      return
-    }
+    // if (!this.isInTransition || e.target.nodeName !== this.scroller.nodeName) {
+    //   console.log(e.target)
+    //   return
+    // }
     this.isInTransition = false
     this.scroller.style.transitionDuration = '0ms'
     if (!this.resetPosition()) {
-      this.trigger('scrollEnd')
+      this.trigger('scrollEnd', this.currentPage)
     }
   }
 }

@@ -21,6 +21,7 @@ export default function initMixin (MScroll) {
     this.x = 0
 
     this._initSlider()
+    this._initMutationOb()
   }
 
   MScroll.prototype._addInitialDom = function () {
@@ -89,5 +90,31 @@ export default function initMixin (MScroll) {
 
     this.maxScrollX = wrapperWidth - scrollerWidth
     this.minScrollX = 0
+  }
+
+  MScroll.prototype._initMutationOb = function () {
+    // 实际功能没能完成
+    if (typeof MutationObserver === 'undefined') {
+      console.log('no MutationObserver')
+      return
+    }
+    let _this = this
+    function obFunc (mutations, observer) {
+      for (let x = 0; x < mutations.length; x++) {
+        if (mutations[x].addedNodes.length !== 0 || mutations[x].removedNodes.length !== 0) {
+          _this.refresh()
+          _this._initPages()
+          _this._goToPage(_this.currentPage)
+          observer.takeRecords()
+          break
+        }
+      }
+    }
+    let observer = new MutationObserver(obFunc)
+    observer.observe(this.scroller, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    })
   }
 }

@@ -5,7 +5,7 @@
         <img :src = 'item.pic_info.url' @click = 'goOut(item)'>
       </li>
     </ul>
-    <div class = 'dots'>
+    <div class = 'dots' ref = 'dots'>
       <span v-for = '(item, index) in slider' :key = 'index' class = 'dot'
        :class = '{active: curPag === index}'
       ></span>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import MScroll from 'common/js/min-better-scroll'
+import MScroll from 'common/js/min-slider'
 export default {
   name: 'slider',
   data () {
@@ -47,8 +47,20 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
+      let _this = this
       this.conputeSliderWidth()
       this.MScroll = new MScroll(this.$refs.slider)
+      let length = this.$refs.dots.children.length
+      this.MScroll.addEventListener('scrollEnd', (page) => {
+        if (page.pageNum === length + 1) {
+          _this.curPag = 0
+          return
+        } else if (page.pageNum === 0) {
+          _this.curPag = length - 1
+          return
+        }
+        _this.curPag = page.pageNum - 1
+      })
     })
   }
 }
@@ -57,10 +69,10 @@ export default {
 <style lang="stylus" scoped>
   .slider
     width 100%
-    padding-bottom 40%
-    height 0
+    height 100%
     overflow hidden
     position relative
+    touch-action false
     ul
       list-style none
       white-space nowrap

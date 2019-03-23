@@ -2,7 +2,9 @@
   <div class = 'app'>
     <home-head></home-head>
     <home-tabs></home-tabs>
-    <router-view/>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 
