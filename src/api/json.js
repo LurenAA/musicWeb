@@ -10,6 +10,7 @@ export default function json (url, methods) {
         }
       }
       let timer = setTimeout(() => {
+        alert('json: out of time ')
         xhr.abort()
         xhr.removeEventListener('readystatechange', fn)
       }, 15000)

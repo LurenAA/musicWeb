@@ -76,6 +76,10 @@ export default {
       console.log(x)
       this.slider = x.focus.data.content
       this.sliderFlag = true
+    }).catch(err => {
+      if (err) {
+        alert(1)
+      }
     })
   },
   components: {
