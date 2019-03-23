@@ -4,7 +4,9 @@ const defaultOptions = {
   ifMomentum: true,
   momentumDistance: 150,
   momentumTime: 200,
-  momentumDeceleration: 0.015
+  momentumDeceleration: 0.015,
+  loop: true,
+  threshold: 0.2
 }
 
 export default function initMixin (MScroll) {
@@ -18,7 +20,7 @@ export default function initMixin (MScroll) {
     this._watchTransition()
     this.x = 0
 
-    this.refresh()
+    this._initSlider()
   }
 
   MScroll.prototype._addInitialDom = function () {

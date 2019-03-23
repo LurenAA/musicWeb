@@ -59,15 +59,25 @@ export default function coreMixin (MScroll) {
     let timeDif = +new Date() - this.startTime
     let newX = this.x
     let duration = 0
+    let ease = ''
     if (this.options.ifMomentum && timeDif < this.options.momentumTime &&
       Math.abs(this.x - this.startX) < this.options.momentumTime) {
       let posInfo = momentum(this.x - this.startX, timeDif, newX, this.options.momentumDeceleration, this.maxScrollX, this.minScrollX, this.wrapper.offsetWidth)
       newX = posInfo.x
       duration = posInfo.duration
+      ease = 'cubic-bezier(0.23, 1, 0.32, 1)'
+    }
+
+    if (this.options.loop) {
+      let newPage = this._nearestPage()
+      this.currentPage = newPage
+      newX = newPage.x
+      duration = 300
+      ease = 'cubic-bezier(0.165, 0.84, 0.44, 1)'
     }
     // console.log(duration)
     if (newX !== this.x) {
-      this.scrollTo(newX, duration, 'cubic-bezier(0.23, 1, 0.32, 1)')
+      this.scrollTo(newX, duration, ease)
     }
   }
 
@@ -85,11 +95,11 @@ export default function coreMixin (MScroll) {
     let x = this.x
     let time = 0
     if (x > this.minScrollX) {
-      time = 1000
+      time = 500
       x = this.minScrollX
       // this.x = this.minScrollX
     } else if (x < this.maxScrollX) {
-      time = 1000
+      time = 500
       x = this.maxScrollX
       // this.x = this.maxScrollX
     } else {
@@ -125,6 +135,8 @@ export default function coreMixin (MScroll) {
     }
     this.isInTransition = false
     this.scroller.style.transitionDuration = '0ms'
-    this.resetPosition()
+    if (!this.resetPosition()) {
+      this.trigger('scrollEnd')
+    }
   }
 }

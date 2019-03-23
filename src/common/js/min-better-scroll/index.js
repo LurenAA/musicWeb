@@ -1,13 +1,17 @@
 import warn from './warn'
 import initMixin from './init'
 import coreMixin from './core'
+import sliderMixin from './slider'
+import eventMixin from './event'
 /*
 options:{
   moveLimitDistance: 15  最小拖动距离，防止误触'
-  ifMomentum: true  是否开启惯性
-  momentumDistance: 100
-  momentumTime: 200,
-  momentumDeceleration: 0.015
+  ifMomentum  是否开启惯性
+  momentumDistance   开启惯性滑动的限制最大长度与时间
+  momentumTime
+  momentumDeceleration
+  loop
+  threshold
 }
 */
 
@@ -28,3 +32,5 @@ export default class MScroll {
 
 initMixin(MScroll)
 coreMixin(MScroll)
+sliderMixin(MScroll)
+eventMixin(MScroll)
