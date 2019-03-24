@@ -22,6 +22,12 @@ export default function initMixin (MScroll) {
 
     this._initSlider()
     this._initMutationOb()
+
+    window.addEventListener('resize', () => {
+      this.refresh()
+      this._initPages()
+      this._goToPage(this.pages[1])
+    })
   }
 
   MScroll.prototype._addInitialDom = function () {
