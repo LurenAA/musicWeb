@@ -15,22 +15,25 @@ options:{
 }
 */
 
-export default class MScroll {
-  constructor (el, options) {
-    this.wrapper = typeof el === 'string' ? document.querySelector(el) : el
-    if (!this.wrapper) {
-      warn('el is not a element')
-    }
-    this.scroller = this.wrapper.children[0]
-    if (!this.scroller) {
-      warn('el must has one child')
-    }
-
-    this._init(options)
+function MScroll (el, options) {
+  this.wrapper = typeof el === 'string' ? document.querySelector(el) : el
+  if (!this.wrapper) {
+    warn('el is not a element')
   }
+  this.scroller = this.wrapper.children[0]
+  if (!this.scroller) {
+    warn('el must has one child')
+  }
+
+  if (options && typeof options !== 'object') {
+    warn('options is not a oject')
+  }
+  this._init(options)
 }
 
 initMixin(MScroll)
 coreMixin(MScroll)
 sliderMixin(MScroll)
 eventMixin(MScroll)
+
+export default MScroll

@@ -33,8 +33,8 @@ export default {
       this.$refs['slider-group'].style.width = `${totalWidth}px`
     },
     goOut (item) {
-      window.location.href = `https://y.qq.com/w/album.html?al
-        bummid=${item.jump_info.url}&ADTAG=myqq&from=myqq&channel=10007100`
+      console.log(item)
+      window.location.href = item.jump_info.url
     }
   },
   props: {
@@ -49,9 +49,15 @@ export default {
     this.$nextTick(() => {
       let _this = this
       this.conputeSliderWidth()
-      this.MScroll = new MScroll(this.$refs.slider)
+      let options = {
+        loop: true,
+        slider: true,
+        scrollX: true,
+        scrollY: false
+      }
+      this.MScrollX = new MScroll(this.$refs.slider, options)
       let length = this.$refs.dots.children.length
-      this.MScroll.addEventListener('scrollEnd', (page) => {
+      this.MScrollX.addEventListener('scrollEnd', (page) => {
         if (page.pageNum === length + 1) {
           _this.curPag = 0
           return

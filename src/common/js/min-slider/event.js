@@ -29,7 +29,7 @@ export default function eventMixin (MScroll) {
   }
 
   MScroll.prototype.trigger = function (type) {
-    if (!this._events[type]) {
+    if (!this._events || !this._events[type]) {
       return
     }
     for (let i = 0; i < this._events[type].length; i++) {

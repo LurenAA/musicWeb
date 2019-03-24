@@ -2,16 +2,19 @@ import warn from './warn'
 const defaultOptions = {
   moveLimitDistance: 15,
   ifMomentum: true,
-  momentumDistance: 150,
+  momentumDistance: 200,
   momentumTime: 200,
   momentumDeceleration: 0.015,
-  loop: true,
-  threshold: 0.2
+  loop: false,
+  threshold: 0.2,
+  slider: false,
+  scrollX: false,
+  scrollY: false
 }
 
 export default function initMixin (MScroll) {
   MScroll.prototype._init = function (options) {
-    this.options = defaultOptions
+    this.options = Object.assign({}, defaultOptions) // 深坑，必须复制不能直接等于
     for (let x in options) {
       this.options[x] = options[x]
     }
@@ -19,14 +22,22 @@ export default function initMixin (MScroll) {
     this._addInitialDom()
     this._watchTransition()
     this.x = 0
+    this.y = 0
 
-    this._initSlider()
-    this._initMutationOb()
+    if (this.options.slider) {
+      this._initSlider()
+    }
+    // this._initMutationOb()
+    this.refresh()
 
     window.addEventListener('resize', () => {
-      this.refresh()
-      this._initPages()
-      this._goToPage(this.pages[1])
+      setTimeout(() => {
+        this.refresh()
+        if (this.options.slider) {
+          this._initPages()
+          this._goToPage(this.pages[1])
+        }
+      }, 500)
     })
   }
 
@@ -49,6 +60,7 @@ export default function initMixin (MScroll) {
     operation('touchmove', this, window)
     operation('touchend', this, window)
 
+    operation('click', this, window)
     operation('transitionend', this, window)
   }
 
@@ -67,6 +79,11 @@ export default function initMixin (MScroll) {
         this._transitionEnd(e)
         break
     }
+  }
+
+  MScroll.prototype._dispatchClick = function (e) {
+    let evt = new MouseEvent('click')
+    e.target.dispatchEvent(evt)
   }
 
   MScroll.prototype._watchTransition = function () {
@@ -91,11 +108,19 @@ export default function initMixin (MScroll) {
 
   MScroll.prototype.refresh = function () {
     // ?dom变换更新后页面位置问题待解决
-    let wrapperWidth = this.wrapper.offsetWidth
-    let scrollerWidth = this.scroller.offsetWidth
+    if (this.options.scrollX) {
+      let wrapperWidth = this.wrapper.offsetWidth
+      let scrollerWidth = this.scroller.offsetWidth
 
-    this.maxScrollX = wrapperWidth - scrollerWidth
-    this.minScrollX = 0
+      this.maxScrollX = wrapperWidth - scrollerWidth
+      this.minScrollX = 0
+    } else if (this.options.scrollY) {
+      let wrapperHeight = this.wrapper.offsetHeight
+      let scrollerHeight = this.scroller.offsetHeight
+
+      this.maxScrollY = wrapperHeight - scrollerHeight
+      this.minScrollY = 0
+    }
   }
 
   MScroll.prototype._initMutationOb = function () {
@@ -109,8 +134,10 @@ export default function initMixin (MScroll) {
       for (let x = 0; x < mutations.length; x++) {
         if (mutations[x].addedNodes.length !== 0 || mutations[x].removedNodes.length !== 0) {
           _this.refresh()
-          _this._initPages()
-          _this._goToPage(_this.currentPage)
+          if (this.options.scrollX && this.options.slider) {
+            _this._initPages()
+            _this._goToPage(_this.currentPage)
+          }
           observer.takeRecords()
           break
         }

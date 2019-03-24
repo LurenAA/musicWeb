@@ -1,91 +1,93 @@
 <template>
-  <div class = 'container'>
-    <div class = 'slider-container'>
-      <slider v-if = 'sliderFlag' :slider = slider></slider>
-    </div>
-    <div class = 'popular'>
-      <div>
-        <div class = 'icon-div'>
-          <i class = 'iconfont'>
-            &#xe75b;
-          </i>
-          <svg width="100%" height="100%" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
-              <circle cx="50%" cy="50%" r="0.45rem"
-              stroke-width="2"/>
-          </svg>
-        </div>
-        <span>新歌榜</span>
+  <div class = 'containerY' ref = 'containerY'>
+    <div>
+      <div class = 'slider-container'>
+        <slider v-if = 'sliderFlag' :slider = slider></slider>
       </div>
-      <div>
-        <div class = 'icon-div'>
-          <i class = 'iconfont'>
-            &#xe76a;
-          </i>
-          <svg width="100%" height="100%" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
-              <circle cx="50%" cy="50%" r="0.45rem"
-              stroke-width="2"/>
-          </svg>
+      <div class = 'popular'>
+        <div>
+          <div class = 'icon-div'>
+            <i class = 'iconfont'>
+              &#xe75b;
+            </i>
+            <svg width="100%" height="100%" version="1.1"
+              xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
+                <circle cx="50%" cy="50%" r="0.45rem"
+                stroke-width="2"/>
+            </svg>
+          </div>
+          <span>新歌榜</span>
         </div>
-        <span>热歌榜</span>
-      </div>
-      <div>
-        <div class = 'icon-div'>
-          <i class = 'iconfont'>
-            &#xe61e;
-          </i>
-          <svg width="100%" height="100%" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
-              <circle cx="50%" cy="50%" r="0.45rem"
-              stroke-width="2"/>
-          </svg>
+        <div>
+          <div class = 'icon-div'>
+            <i class = 'iconfont'>
+              &#xe76a;
+            </i>
+            <svg width="100%" height="100%" version="1.1"
+              xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
+                <circle cx="50%" cy="50%" r="0.45rem"
+                stroke-width="2"/>
+            </svg>
+          </div>
+          <span>热歌榜</span>
         </div>
-        <span>主题推荐</span>
-      </div>
-      <div>
-        <div class = 'icon-div'>
-          <i class = 'iconfont'>
-            &#xe614;
-          </i>
-          <svg width="100%" height="100%" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
-              <circle cx="50%" cy="50%" r="0.45rem"
-              stroke-width="2"/>
-          </svg>
+        <div>
+          <div class = 'icon-div'>
+            <i class = 'iconfont'>
+              &#xe61e;
+            </i>
+            <svg width="100%" height="100%" version="1.1"
+              xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
+                <circle cx="50%" cy="50%" r="0.45rem"
+                stroke-width="2"/>
+            </svg>
+          </div>
+          <span>主题推荐</span>
         </div>
-        <span>今日推荐</span>
-      </div>
-    </div>
-    <div class = 'new-song-recom'>
-      <div class = 'recom-title-div'>
-        <span class = 'recom-title-name'>热门推荐</span>
-        <span class = 'recom-change' @click = 'changeNewSongs'>换一换</span>
-        <div class = 'recom-icon-div'>
-          <i class = 'iconfont'>&#xe626;</i>
+        <div>
+          <div class = 'icon-div'>
+            <i class = 'iconfont'>
+              &#xe614;
+            </i>
+            <svg width="100%" height="100%" version="1.1"
+              xmlns="http://www.w3.org/2000/svg" class = 'svgIcons'>
+                <circle cx="50%" cy="50%" r="0.45rem"
+                stroke-width="2"/>
+            </svg>
+          </div>
+          <span>今日推荐</span>
         </div>
       </div>
-      <ul class = 'recom-list'  v-if = 'recomList.length'>
-        <li v-for = '(item, index) in recomList' :key = index>
-          <div class = 'pic-div'>
-            <div class = 'pic-play'>
-              <i class = 'iconfont'>&#xe66a;</i>
+      <div class = 'new-song-recom'>
+        <div class = 'recom-title-div'>
+          <span class = 'recom-title-name'>热门推荐</span>
+          <span class = 'recom-change' @click = 'changeNewSongs'>换一换</span>
+          <div class = 'recom-icon-div'>
+            <i class = 'iconfont'>&#xe626;</i>
+          </div>
+        </div>
+        <ul class = 'recom-list'  v-if = 'recomList.length'>
+          <li v-for = '(item, index) in recomList' :key = index>
+            <div class = 'pic-div'>
+              <div class = 'pic-play'>
+                <i class = 'iconfont'>&#xe66a;</i>
+              </div>
+              <img  :src= 'item.picUrlSour' >
             </div>
-            <img  :src= 'item.picUrlSour' >
-          </div>
-          <div class = 'pic-des'>
-            <span class = 'des-title'>{{ item.name }}</span>
-            <div class = 'des-content'>
-              <span>HQ</span>
-              <span>MV</span>
-              <span>{{ item.singerDesNum }}</span>
+            <div class = 'pic-des'>
+              <span class = 'des-title'>{{ item.name }}</span>
+              <div class = 'des-content'>
+                <span>HQ</span>
+                <span>MV</span>
+                <span>{{ item.singerDesNum }}</span>
+              </div>
             </div>
-          </div>
-          <div class = 'pic-icon'>
-            <i class = 'iconfont'>&#xe679;</i>
-          </div>
-        </li>
-      </ul>
+            <div class = 'pic-icon'>
+              <i class = 'iconfont'>&#xe679;</i>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -94,6 +96,7 @@
 import json from 'api/json.js'
 // import slider from 'base/slider/slider'
 import { randomNum, sliceSingersName } from 'common/js/util/util'
+import MScroll from 'common/js/min-slider/index'
 import slider from 'base/ownSlider/ownSlider'
 export default {
   name: 'recommend',
@@ -111,6 +114,13 @@ export default {
       this.sliderFlag = true
       this.newSongList = x.new_song.data.song_list
       this._initRecomList()
+      this.scrollY = new MScroll(this.$refs.containerY, {
+        loop: false,
+        slider: false,
+        scrollX: false,
+        scrollY: true
+      })
+      setTimeout(() => { this.scrollY.refresh() }, 500)
     }).catch(err => {
       if (err) {
         console.log(err)
@@ -123,7 +133,7 @@ export default {
   methods: {
     _initRecomList () {
       let numList = []
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 7; i++) { // 改
         let ifSame = 0
         let newNum
         while (ifSame !== -1) {
@@ -154,13 +164,14 @@ export default {
 
 <style lang="stylus" scoped>
   @import '~common/css/index.styl'
-  .container
+  .containerY
     background-color $background-color
     position absolute
     top 1.6rem
     bottom 0
     left 0
     right 0
+    overflow hidden
     .new-song-recom
       background-color #fff
       font-size $font-size-medium-x
@@ -248,10 +259,10 @@ export default {
             -webkit-text-fill-color:transparent;
             font-size $font-size-medium-x
         .recom-change
-          flex 1
           text-align right
           padding-right 8px
         .recom-title-name
+          flex 1
           &::before
             top 5px
             position relative

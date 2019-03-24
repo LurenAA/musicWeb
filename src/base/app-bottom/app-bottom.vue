@@ -62,8 +62,10 @@ export default {
     left 0
     right 0
     height $size(64)
+    z-index 10
     display flex
     list-style none
+    background-color #fff
     li
       flex 1
       display flex

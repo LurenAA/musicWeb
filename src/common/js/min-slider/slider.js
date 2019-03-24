@@ -36,6 +36,9 @@ export default function sliderMixin (MScroll) {
         x: x,
         pageNum
       })
+      if (pageNum > 100) {
+        return
+      }
       pageNum++
       x -= this.wrapper.offsetWidth
     }
