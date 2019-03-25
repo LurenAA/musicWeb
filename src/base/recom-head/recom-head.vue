@@ -18,13 +18,14 @@ export default {
     }
   },
   methods: {
-    changeNewSongs (e) {
+    changeNewSongs () {
       document.querySelector('.recom-icon-div').style['animation-play-state'] = 'running'
-      this.$emit('click', e)
+      this.$emit('click')
       if (this.runningTimer) {
         clearTimeout(this.runningTimer)
       }
       this.runningTimer = setTimeout(() => {
+        this.runningTimer = null
         document.querySelector('.recom-icon-div').style['animation-play-state'] = 'paused'
       }, 500)
     }

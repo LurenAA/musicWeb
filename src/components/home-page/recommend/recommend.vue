@@ -59,7 +59,7 @@
         </div>
       </div>
       <div class = 'new-song-recom'>
-        <recom-head @click="_initRecomList"></recom-head>
+        <recom-head @click="_initRecomList(newSongList, recomList)"></recom-head>
         <ul class = 'recom-list'  v-if = 'recomList.length'>
           <li v-for = '(item, index) in recomList' :key = index>
             <div class = 'pic-div'>
@@ -80,16 +80,23 @@
               <i class = 'iconfont'>&#xe679;</i>
             </div>
           </li>
-          <div class ='more-recom'>
-            查看全部
-            <i class = 'iconfont'>
-              &#xe727;
-            </i>
-          </div>
+          <see-more></see-more>
         </ul>
       </div>
       <div class = 'mv-list'>
-        <recom-head name = 'MV推荐' class = 'head-com'></recom-head>
+        <recom-head name = 'MV推荐' @click="_initRecomList(theMvList,mvList)"></recom-head>
+        <ul>
+          <li v-for = '(item, index) in mvList' :key = 'index'
+           class = 'mv-mem'>
+            <div class = 'mem-pic'>
+              <img :src = 'item.picurl'>
+            </div>
+            <h1>{{ item.title }}</h1>
+            <p class = 'mem-sin'>{{ item.singerDesNum }}</p>
+            <p class = 'play-count'>播放次数：{{ item.playcnt}}</p>
+          </li>
+        </ul>
+        <see-more></see-more>
       </div>
     </div>
   </div>
@@ -102,56 +109,76 @@ import { randomNum, sliceSingersName } from 'common/js/util/util'
 import MScroll from 'common/js/min-slider/index'
 import slider from 'base/ownSlider/ownSlider'
 import recomHead from 'base/recom-head/recom-head'
+import seeMore from 'base/see-more/see-more'
 // import { jsonp, mvParams } from 'common/js/util/jsonp'
 export default {
   name: 'recommend',
   data () {
     return {
       sliderFlag: false,
-      recomList: []
+      recomList: [],
+      mvList: []
     }
   },
   created () {
-    json('http://132.232.249.69:3000/home', 'GET').then(res => {
+    json('http://132.232.249.69:3000/home/recom', 'GET').then(res => {
       let x = JSON.parse(res)
       console.log(x)
       this.slider = x.focus.data.content
       this.sliderFlag = true
       this.newSongList = x.new_song.data.song_list
-      this._initRecomList()
+      this._initRecomList(this.newSongList, this.recomList)
       this.scrollY = new MScroll(this.$refs.containerY, {
         loop: false,
         slider: false,
         scrollX: false,
         scrollY: true
       })
-      setTimeout(() => { this.scrollY.refresh() }, 500)
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => { this.scrollY.refresh() }, 1500)
     }).catch(err => {
       if (err) {
         console.log(err)
       }
     })
+    json('http://132.232.249.69:3000/home/mvlist', 'GET').then(res => {
+      let x = JSON.parse(res)
+      console.log(x)
+      this.theMvList = x.mv_list.data.list
+      this._initRecomList(this.theMvList, this.mvList)
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => { this.scrollY.refresh() }, 1500)
+    })
   },
   components: {
     slider,
-    recomHead
+    recomHead,
+    seeMore
   },
   methods: {
-    _initRecomList () {
+    _initRecomList (base, target) {
       let numList = []
       for (let i = 0; i < 4; i++) { // 改
         let ifSame = 0
         let newNum
         while (ifSame !== -1) {
-          newNum = randomNum(0, this.newSongList.length - 1)
+          newNum = randomNum(0, base.length - 1)
           ifSame = numList.findIndex(value => {
             return value === newNum
           })
         }
         numList[i] = newNum
-        this.$set(this.recomList, i, this.newSongList[numList[i]])
-        this.$set(this.recomList[i], 'picUrlSour', `//y.gtimg.cn/music/photo_new/T002R300x300M000${this.newSongList[numList[i]].album.mid}.jpg?max_age=2592000`)
-        this.$set(this.recomList[i], 'singerDesNum', sliceSingersName(this.newSongList[numList[i]].singer))
+        this.$set(target, i, base[numList[i]])
+        if (target === this.recomList) {
+          this.$set(target[i], 'picUrlSour', `//y.gtimg.cn/music/photo_new/T002R300x300M000${base[numList[i]].album.mid}.jpg?max_age=2592000`)
+          this.$set(target[i], 'singerDesNum', sliceSingersName(base[numList[i]].singer))
+        } else if (target === this.mvList) {
+          this.$set(target[i], 'singerDesNum', sliceSingersName(base[numList[i]].singers))
+        }
       }
     }
   }
@@ -173,17 +200,44 @@ export default {
       font-size $font-size-medium-x
       padding 0 15px
       margin-top 10px
+      ul
+        display flex
+        flex-wrap wrap
+        justify-content space-between
+        .mv-mem
+          flex-basis 47.5%
+          flex-shrink 0
+          display flex
+          flex-direction column
+          overflow hidden
+          padding-bottom 15px
+          h1
+            margin-top 12px
+            font-size $font-size-medium-x
+            white-space nowrap
+            overflow hidden
+            text-overflow ellipsis
+            padding-right 28px
+            font-weight 500
+          .play-count
+            margin-top 4px
+            font-size $font-size-medium
+            color #a2a2a2
+          .mem-sin
+            margin-top 6px
+            color #8a53e4
+            font-size $font-size-medium
+          .mem-pic
+            width 100%
+            height 0
+            padding-bottom 24vw
+            img
+              width 100%
     .new-song-recom
       background-color #fff
       font-size $font-size-medium
       padding 0 15px
       .recom-list
-        .more-recom
-          padding 13px 0 20px
-          text-align center
-          justify-content center
-          font-size $font-size-medium
-          color #717171
         li
           padding 8px 0
           display flex
