@@ -105,7 +105,7 @@ export default function coreMixin (MScroll) {
       let posInfo = momentum(dis, timeDif, newPos, this.options.momentumDeceleration, maxScroll, minScroll, offset)
       newPos = posInfo.x
       duration = posInfo.duration
-      ease = 'ease-in'
+      ease = 'ease-out'
     }
 
     if (this.options.loop && this.options.scrollX) {
@@ -171,7 +171,7 @@ export default function coreMixin (MScroll) {
   }
 
   MScroll.prototype.scrollTo = function (x, time = 0, cubic = '', isY) {
-    if (time !== 0) {
+    if (time !== 0 && !this.options.scrollY) {
       this.isInTransition = true
     }
     // console.log(this.isInTransition, time)

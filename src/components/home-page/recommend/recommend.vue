@@ -59,13 +59,7 @@
         </div>
       </div>
       <div class = 'new-song-recom'>
-        <div class = 'recom-title-div'>
-          <span class = 'recom-title-name'>热门推荐</span>
-          <span class = 'recom-change' @click = 'changeNewSongs'>换一换</span>
-          <div class = 'recom-icon-div'>
-            <i class = 'iconfont'>&#xe626;</i>
-          </div>
-        </div>
+        <recom-head @click="_initRecomList"></recom-head>
         <ul class = 'recom-list'  v-if = 'recomList.length'>
           <li v-for = '(item, index) in recomList' :key = index>
             <div class = 'pic-div'>
@@ -86,7 +80,16 @@
               <i class = 'iconfont'>&#xe679;</i>
             </div>
           </li>
+          <div class ='more-recom'>
+            查看全部
+            <i class = 'iconfont'>
+              &#xe727;
+            </i>
+          </div>
         </ul>
+      </div>
+      <div class = 'mv-list'>
+        <recom-head name = 'MV推荐' class = 'head-com'></recom-head>
       </div>
     </div>
   </div>
@@ -98,6 +101,8 @@ import json from 'api/json.js'
 import { randomNum, sliceSingersName } from 'common/js/util/util'
 import MScroll from 'common/js/min-slider/index'
 import slider from 'base/ownSlider/ownSlider'
+import recomHead from 'base/recom-head/recom-head'
+// import { jsonp, mvParams } from 'common/js/util/jsonp'
 export default {
   name: 'recommend',
   data () {
@@ -128,12 +133,13 @@ export default {
     })
   },
   components: {
-    slider
+    slider,
+    recomHead
   },
   methods: {
     _initRecomList () {
       let numList = []
-      for (let i = 0; i < 7; i++) { // 改
+      for (let i = 0; i < 4; i++) { // 改
         let ifSame = 0
         let newNum
         while (ifSame !== -1) {
@@ -147,16 +153,6 @@ export default {
         this.$set(this.recomList[i], 'picUrlSour', `//y.gtimg.cn/music/photo_new/T002R300x300M000${this.newSongList[numList[i]].album.mid}.jpg?max_age=2592000`)
         this.$set(this.recomList[i], 'singerDesNum', sliceSingersName(this.newSongList[numList[i]].singer))
       }
-    },
-    changeNewSongs () {
-      document.querySelector('.recom-icon-div').style['animation-play-state'] = 'running'
-      this._initRecomList()
-      if (this.runningTimer) {
-        clearTimeout(this.runningTimer)
-      }
-      this.runningTimer = setTimeout(() => {
-        document.querySelector('.recom-icon-div').style['animation-play-state'] = 'paused'
-      }, 500)
     }
   }
 }
@@ -172,11 +168,22 @@ export default {
     left 0
     right 0
     overflow hidden
-    .new-song-recom
+    .mv-list
       background-color #fff
       font-size $font-size-medium-x
       padding 0 15px
+      margin-top 10px
+    .new-song-recom
+      background-color #fff
+      font-size $font-size-medium
+      padding 0 15px
       .recom-list
+        .more-recom
+          padding 13px 0 20px
+          text-align center
+          justify-content center
+          font-size $font-size-medium
+          color #717171
         li
           padding 8px 0
           display flex
@@ -221,6 +228,7 @@ export default {
               text-overflow ellipsis
               margin-bottom 8px
             .des-content
+              line-height 1.1
               white-space nowrap
               max-width 200px
               overflow hidden
@@ -243,36 +251,6 @@ export default {
                 font-size $font-size-medium-x
                 vertical-align middle
                 color #9c9c9c
-      .recom-title-div
-        display flex
-        align-items center
-        line-height $size(64)
-        height $size(64)
-        .recom-icon-div
-          display inline-block
-          line-height $font-size-medium-x
-          animation rota 2s linear infinite
-          animation-play-state paused
-          i
-            background-image: linear-gradient(to bottom, #ba41f0 , #7740e1)
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
-            font-size $font-size-medium-x
-        .recom-change
-          text-align right
-          padding-right 8px
-        .recom-title-name
-          flex 1
-          &::before
-            top 5px
-            position relative
-            content ""
-            display inline-block
-            width 3.5px
-            height 20px
-            margin-right 10px
-            background linear-gradient(to bottom, #ba41f0 , #7740e1)
-            border-radius 3px
     .slider-container
       width 100%
       height 40vw
@@ -311,13 +289,4 @@ export default {
         span
           margin-top .15rem
           font-size $font-size-medium
-
-  @keyframes rota {
-    from{
-      transform: rotate(360deg)
-    }
-    to{
-      transform: rotate(0deg)
-    }
-  }
 </style>
