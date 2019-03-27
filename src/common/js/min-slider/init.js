@@ -60,7 +60,7 @@ export default function initMixin (MScroll) {
     operation('touchmove', this, window)
     operation('touchend', this, window)
 
-    operation('click', this, window)
+    // operation('click', this, window)
     operation('transitionend', this, window)
   }
 
@@ -78,11 +78,15 @@ export default function initMixin (MScroll) {
       case 'transitionend':
         this._transitionEnd(e)
         break
+      case 'click':
+        console.log('click2')
+        break
     }
   }
 
   MScroll.prototype._dispatchClick = function (e) {
-    let evt = new MouseEvent('click')
+    let evt = new Event('click', {'bubbles': true, 'cancelable': false})
+    // evt.initEvent('click', true, false)
     e.target.dispatchEvent(evt)
   }
 

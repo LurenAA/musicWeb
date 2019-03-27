@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import fastClick from 'fastclick'
+import lazyLoad from './common/js/lazy-load/index'
 
 import 'babel-polyfill'
 // import VConsole from 'vconsole'
@@ -15,6 +16,11 @@ import 'common/css/icons.styl'
 // let vconsole = new VConsole()
 Vue.config.productionTip = false
 fastClick.attach(document.body)
+Vue.use(lazyLoad, {
+  loading: require('./common/js/lazy-load/1.gif'),
+  error: require('./common/js/lazy-load/2.jpg'),
+  threshold: 0.2
+})
 
 /* eslint-disable no-new */
 new Vue({

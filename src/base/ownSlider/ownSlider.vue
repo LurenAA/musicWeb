@@ -2,7 +2,7 @@
   <div ref = 'slider' class = 'slider'>
     <ul ref = 'slider-group'>
       <li v-for = '(item, index) in slider' :key = 'index' >
-        <img :src = 'item.pic_info.url' @click = 'goOut(item)'>
+        <img :src = 'item.pic_info.url'>
       </li>
     </ul>
     <div class = 'dots' ref = 'dots'>
@@ -31,11 +31,13 @@ export default {
       }
       totalWidth += 2 * children[0].clientWidth
       this.$refs['slider-group'].style.width = `${totalWidth}px`
-    },
-    goOut (item) {
-      console.log(item)
-      window.location.href = item.jump_info.url
     }
+    // goOut (item) {
+    //   if (item.jump_info.url.substring(0, 2) === 'ht') {
+    //     window.location.href = item.jump_info.url
+    //   }
+    //   window.location.href = `https://y.qq.com/w/album.html?albummid=${item.jump_info.url}&ADTAG=myqq&from=myqq&channel=10007100`
+    // }
   },
   props: {
     slider: {

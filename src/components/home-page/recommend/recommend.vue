@@ -60,13 +60,13 @@
       </div>
       <div class = 'new-song-recom'>
         <recom-head @click="_initRecomList(newSongList, recomList)"></recom-head>
-        <ul class = 'recom-list'  v-if = 'recomList.length'>
+        <ul class = 'recom-list'>
           <li v-for = '(item, index) in recomList' :key = index>
             <div class = 'pic-div'>
               <div class = 'pic-play'>
                 <i class = 'iconfont'>&#xe66a;</i>
               </div>
-              <img  :src= 'item.picUrlSour' >
+              <img  v-lazy= 'item.picUrlSour' >
             </div>
             <div class = 'pic-des'>
               <span class = 'des-title'>{{ item.name }}</span>
@@ -87,9 +87,9 @@
         <recom-head name = 'MV推荐' @click="_initRecomList(theMvList,mvList)"></recom-head>
         <ul>
           <li v-for = '(item, index) in mvList' :key = 'index'
-           class = 'mv-mem'>
+           class = 'mv-mem' @click = 'seeMvDetail (item)'>
             <div class = 'mem-pic'>
-              <img :src = 'item.picurl'>
+              <img v-lazy = 'item.picurl'>
             </div>
             <h1>{{ item.title }}</h1>
             <p class = 'mem-sin'>{{ item.singerDesNum }}</p>
@@ -180,6 +180,9 @@ export default {
           this.$set(target[i], 'singerDesNum', sliceSingersName(base[numList[i]].singers))
         }
       }
+    },
+    seeMvDetail (item) {
+      this.$router.push({name: 'mv-detail-page', params: {id: item.vid}})
     }
   }
 }
@@ -227,16 +230,22 @@ export default {
             margin-top 6px
             color #8a53e4
             font-size $font-size-medium
+            white-space nowrap
+            overflow hidden
+            text-overflow ellipsis
+            padding-right 28px
           .mem-pic
             width 100%
             height 0
-            padding-bottom 24vw
+            padding-bottom 24.5vw
+            overflow hidden
             img
               width 100%
     .new-song-recom
       background-color #fff
       font-size $font-size-medium
       padding 0 15px
+      min-height 300px
       .recom-list
         li
           padding 8px 0
@@ -253,9 +262,10 @@ export default {
             position relative
             flex-shrink 0
             width $size(76)
-            height $size(76)
+            // height $size(76)
+            height 0
+            padding-bottom $size(76)
             border-radius 50%
-            background-color yellow
             overflow hidden
             margin-right 14px
             .pic-play

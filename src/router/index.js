@@ -8,6 +8,7 @@ const HommToplist = () => import('components/home-page/toplist/toplist')
 const FriendsPage = () => import('components/friends-page/friends-page')
 const musicPage = () => import('components/music-page/music-page')
 const userPage = () => import('components/user-page/user-page')
+const MvDatail = () => import('components/mv-detail/mv-detail')
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ export default new Router({
           name: 'home-mv',
           path: 'mv',
           component: HommMv
+        },
+        {
+          path: 'mvDetail/:id',
+          name: 'mv-detail-page',
+          component: MvDatail
         }
       ]
     },

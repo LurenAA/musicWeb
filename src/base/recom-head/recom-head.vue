@@ -1,8 +1,8 @@
 <template>
   <div class = 'recom-title-div'>
     <span class = 'recom-title-name'>{{ name }}</span>
-    <span class = 'recom-change' @click = 'changeNewSongs'>换一换</span>
-    <div class = 'recom-icon-div'>
+    <span class = 'recom-change' @click = 'changeNewSongs' >换一换</span>
+    <div class = 'recom-icon-div' ref = 'rota' >
       <i class = 'iconfont'>&#xe626;</i>
     </div>
   </div>
@@ -19,14 +19,14 @@ export default {
   },
   methods: {
     changeNewSongs () {
-      document.querySelector('.recom-icon-div').style['animation-play-state'] = 'running'
+      this.$refs.rota.style['animation-play-state'] = 'running'
       this.$emit('click')
       if (this.runningTimer) {
         clearTimeout(this.runningTimer)
       }
       this.runningTimer = setTimeout(() => {
         this.runningTimer = null
-        document.querySelector('.recom-icon-div').style['animation-play-state'] = 'paused'
+        this.$refs.rota.style['animation-play-state'] = 'paused'
       }, 500)
     }
   }
