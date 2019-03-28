@@ -59,6 +59,7 @@ export default function initMixin (MScroll) {
     operation('touchstart', this, this.scroller)
     operation('touchmove', this, window)
     operation('touchend', this, window)
+    operation('touchcancle', this, window)
 
     // operation('click', this, window)
     operation('transitionend', this, window)
@@ -78,8 +79,11 @@ export default function initMixin (MScroll) {
       case 'transitionend':
         this._transitionEnd(e)
         break
-      case 'click':
-        console.log('click2')
+      // case 'click':
+      //   console.log('click2')
+      //   break
+      case 'touchcancle':
+        console.log('touchcancle')
         break
     }
   }

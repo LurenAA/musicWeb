@@ -2,6 +2,7 @@
   <div class = 'app'>
     <home-head></home-head>
     <home-tabs></home-tabs>
+    <app-bottom></app-bottom>
     <keep-alive>
       <router-view/>
     </keep-alive>
@@ -11,11 +12,13 @@
 <script>
 import homeHead from 'base/home-head/home-head'
 import homeTabs from 'base/home-tabs/home-tabs'
+import appBottom from 'base/app-bottom/app-bottom'
 export default {
   name: 'home-page',
   components: {
     homeHead,
-    homeTabs
+    homeTabs,
+    appBottom
   }
 }
 </script>

@@ -99,6 +99,17 @@
         <see-more></see-more>
       </div>
     </div>
+    <transition name = 'showload'>
+      <div class = 'loading-back-div' v-show = '!finishFlag'>
+        <div class = 'title-wrapper'>
+          <div class = 'iconfont'>
+            &#xe75b;
+          </div>
+          Music
+        </div>
+        <img class = 'loading-animation' src = '../2.gif'>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -117,7 +128,8 @@ export default {
     return {
       sliderFlag: false,
       recomList: [],
-      mvList: []
+      mvList: [],
+      finishFlag: false
     }
   },
   created () {
@@ -137,7 +149,10 @@ export default {
       if (this.timer) {
         clearTimeout(this.timer)
       }
-      this.timer = setTimeout(() => { this.scrollY.refresh() }, 1500)
+      this.timer = setTimeout(() => {
+        this.scrollY.refresh()
+        this.finishFlag = true
+      }, 1500)
     }).catch(err => {
       if (err) {
         console.log(err)
@@ -190,6 +205,35 @@ export default {
 
 <style lang="stylus" scoped>
   @import '~common/css/index.styl'
+  .loading-back-div
+    position fixed
+    top 0
+    left 0
+    right 0
+    bottom $size(-64)
+    background-image url('../1.jpg')
+    background-size cover
+    background-repeat no-repeat
+    z-index 100
+    &.showload-leave-to
+      opacity 0
+    &.showload-leave-active
+      transition all 0.5s
+    .loading-animation
+      position absolute
+      left 0
+      right 0
+      bottom 65px
+      margin 0 auto
+      z-index 20
+    .title-wrapper
+      position absolute
+      top 80px
+      left 40px
+      font-size 25px
+      div
+        display inline-block
+        font-size 20px
   .containerY
     background-color $background-color
     position absolute
