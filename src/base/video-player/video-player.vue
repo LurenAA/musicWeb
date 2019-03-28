@@ -1,10 +1,10 @@
 <template>
-  <div class = 'video-container'>
-    <div class = 'player-title'>
+  <div class = 'video-container' @click = 'callControl'>
+    <div class = 'player-title' v-show = 'showControl'>
       <div class = 'icon-div' @click = 'back'>
         <i class = 'iconfont'>&#xe644;</i>
       </div>
-      <h1></h1>
+      <h1>{{ mvInfo.title }}</h1>
       <div class = 'icon-div'>
         <i class = 'iconfont'>&#xe611;</i>
       </div>
@@ -16,10 +16,14 @@
       <source :src="url" type="video/mp4">
       您的浏览器不支持 video 标签。
     </video>
+    <div class = 'player-control' v-show = 'showControl'>
+
+    </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'video-player',
   props: {
@@ -29,6 +33,11 @@ export default {
         return ''
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'mv'
+    ])
   },
   methods: {
     handleEvent (e) {
@@ -49,10 +58,22 @@ export default {
           this.$emit('changeUrl')
           this.checkUrl()
         }
-      }, 2000)
+      }, 3000)
     },
     back () {
-      console.log(1)
+      this.$router.go(-1)
+    },
+    changeControl () {
+      if (this.controlTimer) {
+        clearTimeout(this.controlTimer)
+      }
+      this.controlTimer = setTimeout(() => {
+        this.showControl = false
+      }, 2500)
+    },
+    callControl () {
+      this.showControl = true
+      this.changeControl()
     }
   },
   watch: {
@@ -73,8 +94,20 @@ export default {
     }
   },
   activated () {
+    if (!this.mv) {
+      this.$router.push({name: 'home-page'})
+    }
     this.$refs.video.addEventListener('error', this)
     this.$refs.video.addEventListener('canplay', this)
+    this.mvInfo = this.mv
+    this.showControl = true
+    this.changeControl()
+  },
+  data () {
+    return {
+      mvInfo: {},
+      showControl: true
+    }
   }
 }
 </script>
@@ -90,7 +123,7 @@ export default {
       z-index 2
       height 38px
       line-height 38px
-      background-color transparent
+      background: linear-gradient(to bottom, rgba(0,0,0,70%),rgba(0,0,0,0))
       position absolute
       top 0
       left 0
@@ -100,6 +133,11 @@ export default {
       box-sizing border-box
       h1
         flex 1
+        overflow hidden
+        white-space nowrap
+        text-overflow ellipsis
+        padding 0 10px
+        color #fff
       .icon-div
         padding 0 10px
         height 100%

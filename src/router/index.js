@@ -12,7 +12,7 @@ const MvDatail = () => import('components/mv-detail/mv-detail')
 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   routes: [
     {
       name: 'root',
@@ -66,3 +66,5 @@ export default new Router({
     }
   ]
 })
+
+export default router

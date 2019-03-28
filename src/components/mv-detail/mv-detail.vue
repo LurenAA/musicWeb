@@ -1,7 +1,9 @@
 <template>
-  <div class = 'container'>
-    <video-player :url = 'mvUrl' @changeUrl = 'changeMvUrl'></video-player>
-  </div>
+  <transition name = 'detail'>
+    <div class = 'container'>
+      <video-player :url = 'mvUrl' @changeUrl = 'changeMvUrl'></video-player>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -51,6 +53,12 @@ export default {
 
 <style lang="stylus" scoped>
   @import '~common/css/index.styl'
+  .detail-enter
+  .detail-leave-to
+    transform translateX(100%)
+  .detail-enter-active
+  .detail-leave-active
+    transition all .7s
   .container
     background-color $background-color
     position absolute
@@ -58,5 +66,6 @@ export default {
     bottom 0
     left 0
     right 0
+    z-index 20
     overflow hidden
 </style>

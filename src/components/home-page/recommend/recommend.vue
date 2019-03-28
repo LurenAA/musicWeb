@@ -122,14 +122,26 @@ import slider from 'base/ownSlider/ownSlider'
 import recomHead from 'base/recom-head/recom-head'
 import seeMore from 'base/see-more/see-more'
 // import { jsonp, mvParams } from 'common/js/util/jsonp'
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'recommend',
+  beforeRouteEnter (to, from, next) {
+    // console.log(from)
+    if (from.path === '/') {
+      next(vm => {
+        vm.finishFlag = false
+      })
+    } else {
+      next()
+    }
+  },
   data () {
     return {
       sliderFlag: false,
       recomList: [],
       mvList: [],
-      finishFlag: false
+      finishFlag: true
     }
   },
   created () {
@@ -197,8 +209,12 @@ export default {
       }
     },
     seeMvDetail (item) {
+      this.changeMv(item)
       this.$router.push({name: 'mv-detail-page', params: {id: item.vid}})
-    }
+    },
+    ...mapMutations({
+      changeMv: 'CHANGE_MV'
+    })
   }
 }
 </script>
@@ -211,6 +227,7 @@ export default {
     left 0
     right 0
     bottom $size(-64)
+    background-color white
     background-image url('../1.jpg')
     background-size cover
     background-repeat no-repeat
@@ -221,9 +238,8 @@ export default {
       transition all 0.5s
     .loading-animation
       position absolute
-      left 0
-      right 0
-      bottom 65px
+      left 20px
+      top 120px
       margin 0 auto
       z-index 20
     .title-wrapper
