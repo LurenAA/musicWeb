@@ -1,29 +1,42 @@
 <template>
-  <div class = 'video-container' @click = 'callControl'>
-    <div class = 'player-title' v-show = 'showControl'>
-      <div class = 'icon-div' @click = 'back'>
-        <i class = 'iconfont'>&#xe644;</i>
+  <div class = 'video-container'>
+    <transition name = 'title'>
+      <div class = 'player-title' v-show = 'showControl'>
+        <div class = 'icon-div' @click = 'back'>
+          <i class = 'iconfont'>&#xe644;</i>
+        </div>
+        <h1>{{ mvInfo.title }}</h1>
+        <div class = 'icon-div'>
+          <i class = 'iconfont'>&#xe611;</i>
+        </div>
+        <div class = 'icon-div'>
+          <i class = 'iconfont'>&#xe62e;</i>
+        </div>
       </div>
-      <h1>{{ mvInfo.title }}</h1>
-      <div class = 'icon-div'>
-        <i class = 'iconfont'>&#xe611;</i>
-      </div>
-      <div class = 'icon-div'>
-        <i class = 'iconfont'>&#xe62e;</i>
-      </div>
-    </div>
-    <video ref = 'video' class = 'video'>
+    </transition>
+    <video ref = 'video' class = 'video' @timeupdate="timeUpdate" @click = 'callControl'>
       <source :src="url" type="video/mp4">
       您的浏览器不支持 video 标签。
     </video>
-    <div class = 'player-control' v-show = 'showControl'>
-
+    <transition name = 'control'>
+      <div class = 'player-control' v-show = 'showControl'>
+        <span>{{ currentTime }} / <em>{{ duration}}</em></span>
+        <div>
+          <i class = 'iconfont'>&#xe61d;</i>
+        </div>
+      </div>
+    </transition>
+    <div class = 'pauseOrplay' v-show = 'showControl'>
+      <div ref = 'rota-icon' @click = 'trigglePlay'>
+        <i class = 'iconfont' v-html = 'stateIcon'></i>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { formatTime } from 'common/js/util/util'
 export default {
   name: 'video-player',
   props: {
@@ -37,7 +50,11 @@ export default {
   computed: {
     ...mapGetters([
       'mv'
-    ])
+    ]),
+    stateIcon () {
+      return this.palyState === 'loading' ? '&#xe655;'
+        : this.palyState === 'play' ? '&#xe76b;' : '&#xe6ce;'
+    }
   },
   methods: {
     handleEvent (e) {
@@ -46,11 +63,25 @@ export default {
           console.log('error')
           break
         case 'canplay':
-          this.$refs.video.play()
+          this.duration = formatTime(this.$refs.video.duration)
+          // this.$refs.video.play()
+          this.$refs['rota-icon'].style['animation-play-state'] = 'paused'
+          this.$refs['rota-icon'].style['display'] = 'none'
+          setTimeout(() => {
+            this.$refs['rota-icon'].style['display'] = 'block'
+          }, 100)
+          this.palyState = 'pause'
+          this.autoHideControl()
           break
       }
     },
+    timeUpdate (e) {
+      this.currentTime = formatTime(e.target.currentTime)
+    },
     checkUrl () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
       this.timer = setTimeout(() => {
         if (this.$refs.video.readyState === 0) {
           // this.changeMvUrl()
@@ -58,30 +89,51 @@ export default {
           this.$emit('changeUrl')
           this.checkUrl()
         }
-      }, 3000)
+      }, 2000)
     },
     back () {
       this.$router.go(-1)
     },
-    changeControl () {
+    autoHideControl () {
       if (this.controlTimer) {
         clearTimeout(this.controlTimer)
       }
       this.controlTimer = setTimeout(() => {
         this.showControl = false
-      }, 2500)
+      }, 4500)
     },
     callControl () {
-      this.showControl = true
-      this.changeControl()
+      // console.dir(this.$refs.video)
+      if (!this.showControl) {
+        this.showControl = true
+        this.autoHideControl()
+      } else {
+        if (this.controlTimer) {
+          clearTimeout(this.controlTimer)
+        }
+        this.showControl = false
+      }
+    },
+    trigglePlay () {
+      if (this.palyState === 'play') {
+        this.palyState = 'pause'
+        this.$refs.video.pause()
+      } else if (this.palyState === 'pause') {
+        this.palyState = 'play'
+        this.$refs.video.play()
+      }
     }
   },
   watch: {
     url: function (newVal) {
       if (newVal && newVal === 'error') {
         console.log('error')
+        if (this.timer) {
+          clearTimeout(this.timer)
+        }
       } else if (newVal) {
         this.$refs.video.load()
+        this.palyState = 'loading'
         this.checkUrl()
       }
     }
@@ -95,18 +147,21 @@ export default {
   },
   activated () {
     if (!this.mv) {
-      this.$router.push({name: 'home-page'})
+      this.showControl = false
+      return
     }
     this.$refs.video.addEventListener('error', this)
     this.$refs.video.addEventListener('canplay', this)
     this.mvInfo = this.mv
     this.showControl = true
-    this.changeControl()
   },
   data () {
     return {
       mvInfo: {},
-      showControl: true
+      showControl: true,
+      currentTime: '00:00',
+      duration: '00:00',
+      palyState: 'loading' // loaing,play,pause
     }
   }
 }
@@ -114,11 +169,56 @@ export default {
 
 <style lang="stylus" scoped>
   @import '~common/css/variable'
+  @keyframes rota {
+    from {
+      transform: rotate(0deg)
+    }
+    to{
+      transform: rotate(360deg)
+    }
+  }
   .video-container
     height 200px
     width 100%
     background-color #000
     position relative
+    overflow hidden
+    .pauseOrplay
+      position absolute
+      top 50%
+      left 50%
+      color rgba(256,256,256, 0.5)
+      transform translate(-50%,-50%)
+      div
+        margin 0 auto
+        animation rota 2s linear infinite
+        animation-fill-mode backwards
+        i
+          font-size 1rem
+    .player-control
+      position absolute
+      bottom 0
+      left 0
+      right 0
+      z-index 2
+      height 38px
+      line-height 38px
+      background: linear-gradient(to bottom, rgba(0,0,0,0),rgba(0,0,0,70%))
+      padding 0 10px
+      &.control-enter,&.control-leave-to
+        transform translateY(100%)
+      &.control-enter-active,&.control-leave-active
+        transition all 0.3s
+      span
+        color #fff
+        font-size $font-size-medium
+        em
+          color rgba(256,256,256, 0.5)
+      div
+        float right
+        i
+          color #fff
+          font-size $font-size-large-x
     .player-title
       z-index 2
       height 38px
@@ -131,6 +231,10 @@ export default {
       display flex
       align-items center
       box-sizing border-box
+      &.title-enter,&.title-leave-to
+        transform translateY(-100%)
+      &.title-enter-active,&.title-leave-active
+        transition all 0.3s
       h1
         flex 1
         overflow hidden

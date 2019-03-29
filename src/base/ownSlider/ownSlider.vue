@@ -45,6 +45,12 @@ export default {
       default: function () {
         return []
       }
+    },
+    ifAutoPlay: {
+      type: Boolean,
+      default: function () {
+        return false
+      }
     }
   },
   mounted () {
@@ -69,6 +75,9 @@ export default {
         }
         _this.curPag = page.pageNum - 1
       })
+      if (this.ifAutoPlay) {
+        // this.MScrollX._goToPage(this.MScrollX.pages[this.MScrollX.currentPage.pageNum + 1])
+      }
     })
   }
 }

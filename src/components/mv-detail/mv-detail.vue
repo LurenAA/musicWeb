@@ -9,12 +9,22 @@
 <script>
 import { jsonp, mvParams } from '@/api/jsonp'
 import videoPlayer from 'base/video-player/video-player'
+import { mapGetters } from 'vuex'
 export default {
   name: 'mv-detail',
   components: {
     videoPlayer
   },
+  computed: {
+    ...mapGetters([
+      'mv'
+    ])
+  },
   activated () {
+    if (!this.mv) {
+      this.$router.push({name: 'home-page'})
+      return
+    }
     jsonp('https://u.y.qq.com/cgi-bin/musicu.fcg', mvParams(this.$route.params.id))
       .then(res => {
         this.playList = res.getMvUrl.data[Object.keys(res.getMvUrl.data)[0]].mp4
@@ -58,7 +68,7 @@ export default {
     transform translateX(100%)
   .detail-enter-active
   .detail-leave-active
-    transition all .7s
+    transition all .5s
   .container
     background-color $background-color
     position absolute

@@ -2,7 +2,7 @@
   <div class = 'containerY' ref = 'containerY'>
     <div>
       <div class = 'slider-container'>
-        <slider v-if = 'sliderFlag' :slider = slider></slider>
+        <slider v-if = 'sliderFlag' :slider = slider :ifAutoPlay = 'true'></slider>
       </div>
       <div class = 'popular'>
         <div>
@@ -101,13 +101,11 @@
     </div>
     <transition name = 'showload'>
       <div class = 'loading-back-div' v-show = '!finishFlag'>
-        <div class = 'title-wrapper'>
-          <div class = 'iconfont'>
-            &#xe75b;
-          </div>
-          Music
+        <div class = 'loading-des'>
+          <img src = '../1.png'>
+          <h1>**音乐</h1>
+          <h1>让生活充满音乐</h1>
         </div>
-        <img class = 'loading-animation' src = '../2.gif'>
       </div>
     </transition>
   </div>
@@ -131,6 +129,9 @@ export default {
     if (from.path === '/') {
       next(vm => {
         vm.finishFlag = false
+        setTimeout(() => {
+          vm.finishFlag = true
+        }, 2000)
       })
     } else {
       next()
@@ -163,8 +164,8 @@ export default {
       }
       this.timer = setTimeout(() => {
         this.scrollY.refresh()
-        this.finishFlag = true
-      }, 1500)
+        // this.finishFlag = true
+      }, 2500)
     }).catch(err => {
       if (err) {
         console.log(err)
@@ -228,28 +229,29 @@ export default {
     right 0
     bottom $size(-64)
     background-color white
-    background-image url('../1.jpg')
-    background-size cover
-    background-repeat no-repeat
     z-index 100
     &.showload-leave-to
       opacity 0
     &.showload-leave-active
       transition all 0.5s
-    .loading-animation
+    .loading-des
       position absolute
-      left 20px
-      top 120px
-      margin 0 auto
-      z-index 20
-    .title-wrapper
-      position absolute
-      top 80px
-      left 40px
-      font-size 25px
-      div
-        display inline-block
-        font-size 20px
+      top 40%
+      left 50%
+      transform translate(-50%,-50%)
+      img
+        transform scale(1.5)
+      h1
+        text-align center
+        color #000000
+        &:nth-child(2)
+          font-family YouYuan
+          font-weight bold
+          font-size 40px
+          margin-top 40px
+        &:nth-child(3)
+          font-size 18px
+          margin-top 12px
   .containerY
     background-color $background-color
     position absolute
