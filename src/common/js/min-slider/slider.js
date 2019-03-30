@@ -64,4 +64,12 @@ export default function sliderMixin (MScroll) {
     newPage = newPage < 0 ? 0 : newPage > this.pages.length - 1 ? this.pages.length - 1 : newPage
     return this.pages[newPage]
   }
+
+  MScroll.prototype.next = function () {
+    let nextPage = this.currentPage.pageNum + 1
+    if (nextPage === this.pages.length) {
+      nextPage = 0
+    }
+    this._goToPage(this.pages[nextPage], 250, 'cubic-bezier(0.165, 0.84, 0.44, 1)')
+  }
 }

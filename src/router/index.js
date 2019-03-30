@@ -41,11 +41,6 @@ let router = new Router({
           name: 'home-mv',
           path: 'mv',
           component: HommMv
-        },
-        {
-          path: 'mvDetail/:id',
-          name: 'mv-detail-page',
-          component: MvDatail
         }
       ]
     },
@@ -63,6 +58,11 @@ let router = new Router({
       path: '/user',
       name: 'user-page',
       component: userPage
+    },
+    {
+      path: '/mvDetail/:id',
+      name: 'mv-detail-page',
+      component: MvDatail
     }
   ]
 })

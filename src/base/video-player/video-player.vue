@@ -31,14 +31,24 @@
         <i class = 'iconfont' v-html = 'stateIcon'></i>
       </div>
     </div>
+    <progress-bar v-if = 'this.palyState !== "loading"'
+     :currentTime = 'this.$refs.video.currentTime'
+     :duration = 'this.$refs.video.duration'
+     class = 'progress-bar'
+    >
+    </progress-bar>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { formatTime } from 'common/js/util/util'
+import progressBar from 'base/progress-bar/progress-bar'
 export default {
   name: 'video-player',
+  components: {
+    progressBar
+  },
   props: {
     url: {
       type: String,
@@ -183,6 +193,11 @@ export default {
     background-color #000
     position relative
     overflow hidden
+    .progress-bar
+      position fixed
+      top 200px
+      left 0
+      right 0
     .pauseOrplay
       position absolute
       top 50%

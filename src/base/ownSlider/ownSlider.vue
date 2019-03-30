@@ -31,6 +31,22 @@ export default {
       }
       totalWidth += 2 * children[0].clientWidth
       this.$refs['slider-group'].style.width = `${totalWidth}px`
+    },
+    handleScrollEnd: function (length, page) {
+      if (page.pageNum === length + 1) {
+        this.curPag = 0
+        return
+      } else if (page.pageNum === 0) {
+        this.curPag = length - 1
+        return
+      }
+      this.curPag = page.pageNum - 1
+      if (this.autoPlayTimer) {
+        clearTimeout(this.autoPlayTimer)
+      }
+      this.autoPlayTimer = setInterval(() => {
+        this.MScrollX.next()
+      }, 3000)
     }
     // goOut (item) {
     //   if (item.jump_info.url.substring(0, 2) === 'ht') {
@@ -55,7 +71,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let _this = this
+      // let _this = this
       this.conputeSliderWidth()
       let options = {
         loop: true,
@@ -65,18 +81,16 @@ export default {
       }
       this.MScrollX = new MScroll(this.$refs.slider, options)
       let length = this.$refs.dots.children.length
-      this.MScrollX.addEventListener('scrollEnd', (page) => {
-        if (page.pageNum === length + 1) {
-          _this.curPag = 0
-          return
-        } else if (page.pageNum === 0) {
-          _this.curPag = length - 1
-          return
-        }
-        _this.curPag = page.pageNum - 1
-      })
+      this.MScrollX.addEventListener('scrollEnd', this.handleScrollEnd.bind(this, length))
       if (this.ifAutoPlay) {
-        // this.MScrollX._goToPage(this.MScrollX.pages[this.MScrollX.currentPage.pageNum + 1])
+        this.MScrollX.addEventListener('moving', () => {
+          if (this.autoPlayTimer) {
+            clearTimeout(this.autoPlayTimer)
+          }
+        })
+        this.autoPlayTimer = setInterval(() => {
+          this.MScrollX.next()
+        }, 3000)
       }
     })
   }

@@ -25,6 +25,7 @@ export default function coreMixin (MScroll) {
     }
     e.preventDefault()
     e.stopPropagation()
+    this.trigger('moving')
     if (this.options.scrollX) {
       let curPos = e.touches[0].pageX
       let deltaX = curPos - this.pointX
