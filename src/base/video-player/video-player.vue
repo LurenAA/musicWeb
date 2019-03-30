@@ -1,40 +1,44 @@
 <template>
-  <div class = 'video-container'>
-    <transition name = 'title'>
-      <div class = 'player-title' v-show = 'showControl'>
-        <div class = 'icon-div' @click = 'back'>
-          <i class = 'iconfont'>&#xe644;</i>
+  <div >
+    <div class = 'video-container'>
+      <transition name = 'title'>
+        <div class = 'player-title' v-show = 'showControl'>
+          <div class = 'icon-div' @click = 'back'>
+            <i class = 'iconfont'>&#xe644;</i>
+          </div>
+          <h1>{{ mvInfo.title }}</h1>
+          <div class = 'icon-div'>
+            <i class = 'iconfont'>&#xe611;</i>
+          </div>
+          <div class = 'icon-div'>
+            <i class = 'iconfont'>&#xe62e;</i>
+          </div>
         </div>
-        <h1>{{ mvInfo.title }}</h1>
-        <div class = 'icon-div'>
-          <i class = 'iconfont'>&#xe611;</i>
+      </transition>
+      <video ref = 'video' class = 'video' @timeupdate="timeUpdate" @click = 'callControl'>
+        <source :src="url" type="video/mp4">
+        您的浏览器不支持 video 标签。
+      </video>
+      <transition name = 'control'>
+        <div class = 'player-control' v-show = 'showControl'>
+          <span>{{ currentTime }} / <em>{{ duration}}</em></span>
+          <div>
+            <i class = 'iconfont'>&#xe61d;</i>
+          </div>
         </div>
-        <div class = 'icon-div'>
-          <i class = 'iconfont'>&#xe62e;</i>
+      </transition>
+      <div class = 'pauseOrplay' v-show = 'showControl'>
+        <div ref = 'rota-icon' @click = 'trigglePlay'>
+          <i class = 'iconfont' v-html = 'stateIcon'></i>
         </div>
-      </div>
-    </transition>
-    <video ref = 'video' class = 'video' @timeupdate="timeUpdate" @click = 'callControl'>
-      <source :src="url" type="video/mp4">
-      您的浏览器不支持 video 标签。
-    </video>
-    <transition name = 'control'>
-      <div class = 'player-control' v-show = 'showControl'>
-        <span>{{ currentTime }} / <em>{{ duration}}</em></span>
-        <div>
-          <i class = 'iconfont'>&#xe61d;</i>
-        </div>
-      </div>
-    </transition>
-    <div class = 'pauseOrplay' v-show = 'showControl'>
-      <div ref = 'rota-icon' @click = 'trigglePlay'>
-        <i class = 'iconfont' v-html = 'stateIcon'></i>
       </div>
     </div>
     <progress-bar v-if = 'this.palyState !== "loading"'
      :currentTime = 'this.$refs.video.currentTime'
      :duration = 'this.$refs.video.duration'
-     class = 'progress-bar'
+     :showControl = 'showControl'
+     @showControl = 'moveShowControl'
+     @hideControl = 'hideShowControl'
     >
     </progress-bar>
   </div>
@@ -73,6 +77,7 @@ export default {
           console.log('error')
           break
         case 'canplay':
+          console.log('canplay')
           this.duration = formatTime(this.$refs.video.duration)
           // this.$refs.video.play()
           this.$refs['rota-icon'].style['animation-play-state'] = 'paused'
@@ -132,6 +137,17 @@ export default {
         this.palyState = 'play'
         this.$refs.video.play()
       }
+    },
+    moveShowControl () {
+      this.showControl = true
+      if (this.controlTimer) {
+        clearTimeout(this.controlTimer)
+      }
+    },
+    hideShowControl (x) {
+      let curTime = x * this.$refs.video.duration
+      this.$refs.video.currentTime = curTime
+      this.autoHideControl()
     }
   },
   watch: {
@@ -162,6 +178,7 @@ export default {
     }
     this.$refs.video.addEventListener('error', this)
     this.$refs.video.addEventListener('canplay', this)
+    this.$refs['rota-icon'].style['animation-play-state'] = 'running'
     this.mvInfo = this.mv
     this.showControl = true
   },
@@ -193,11 +210,6 @@ export default {
     background-color #000
     position relative
     overflow hidden
-    .progress-bar
-      position fixed
-      top 200px
-      left 0
-      right 0
     .pauseOrplay
       position absolute
       top 50%

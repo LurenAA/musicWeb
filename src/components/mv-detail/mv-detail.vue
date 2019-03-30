@@ -1,5 +1,5 @@
 <template>
-  <transition name = 'detail'>
+  <transition>
     <div class = 'container'>
       <video-player :url = 'mvUrl' @changeUrl = 'changeMvUrl'></video-player>
     </div>
@@ -20,9 +20,15 @@ export default {
       'mv'
     ])
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if (from.path === '/') {
+        vm.$router.push({name: 'home-page'})
+      }
+    })
+  },
   activated () {
     if (!this.mv) {
-      this.$router.push({name: 'home-page'})
       return
     }
     jsonp('https://u.y.qq.com/cgi-bin/musicu.fcg', mvParams(this.$route.params.id))
@@ -56,6 +62,9 @@ export default {
       } else {
         this.mvUrl = this.availableMvUrl[this.mvIndex++]
       }
+    },
+    change: function () {
+      this.show = !this.show
     }
   }
 }
@@ -63,12 +72,12 @@ export default {
 
 <style lang="stylus" scoped>
   @import '~common/css/index.styl'
-  .detail-enter
-  .detail-leave-to
+  .v-enter
+  .v-leave-to
     transform translateX(100%)
-  .detail-enter-active
-  .detail-leave-active
-    transition all .5s
+  .v-enter-active
+  .v-leave-active
+    transition all 0.5s
   .container
     background-color $background-color
     position absolute
