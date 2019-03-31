@@ -78,6 +78,10 @@ export default {
           break
         case 'canplay':
           console.log('canplay')
+          if (this.changeProgress) {
+            this.changeProgress = false
+            return
+          }
           this.duration = formatTime(this.$refs.video.duration)
           // this.$refs.video.play()
           this.$refs['rota-icon'].style['animation-play-state'] = 'paused'
@@ -87,6 +91,7 @@ export default {
           }, 100)
           this.palyState = 'pause'
           this.autoHideControl()
+          // this.$refs.video.removeEventListener('canplay', this)
           break
       }
     },
@@ -107,7 +112,7 @@ export default {
       }, 2000)
     },
     back () {
-      this.$router.go(-1)
+      this.$router.push({name: 'home-page'})
     },
     autoHideControl () {
       if (this.controlTimer) {
@@ -140,6 +145,7 @@ export default {
     },
     moveShowControl () {
       this.showControl = true
+      this.changeProgress = true
       if (this.controlTimer) {
         clearTimeout(this.controlTimer)
       }
@@ -159,6 +165,7 @@ export default {
         }
       } else if (newVal) {
         this.$refs.video.load()
+        this.$refs['rota-icon'].style['animation-play-state'] = 'running'
         this.palyState = 'loading'
         this.checkUrl()
       }
@@ -166,9 +173,11 @@ export default {
   },
   deactivated () {
     this.$refs.video.removeEventListener('error', this)
-    this.$refs.video.removeEventListener('canplay', this)
     if (this.timer) {
       clearTimeout(this.timer)
+    }
+    if (this.controlTimer) {
+      clearTimeout(this.controlTimer)
     }
   },
   activated () {
@@ -178,7 +187,6 @@ export default {
     }
     this.$refs.video.addEventListener('error', this)
     this.$refs.video.addEventListener('canplay', this)
-    this.$refs['rota-icon'].style['animation-play-state'] = 'running'
     this.mvInfo = this.mv
     this.showControl = true
   },
@@ -188,7 +196,8 @@ export default {
       showControl: true,
       currentTime: '00:00',
       duration: '00:00',
-      palyState: 'loading' // loaing,play,pause
+      palyState: 'loading', // loaing,play,pause
+      changeProgress: false
     }
   }
 }
@@ -210,6 +219,7 @@ export default {
     background-color #000
     position relative
     overflow hidden
+    user-select:none
     .pauseOrplay
       position absolute
       top 50%

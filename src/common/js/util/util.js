@@ -24,3 +24,8 @@ export function formatTime (time) {
   let sec = parseInt(time % 60)
   return `${min >= 10 ? min : '0' + min}:${sec >= 10 ? sec : '0' + sec}`
 }
+
+export function getTimeString (time) {
+  let theDate = new Date(time * 1000)
+  return `${theDate.getFullYear()}-${theDate.getUTCMonth() + 1}-${theDate.getUTCDate()}`
+}

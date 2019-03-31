@@ -1,11 +1,13 @@
 <template>
   <div class = 'bar'>
     <div class = 'cur' ref = 'cur'>
-      <div class = 'dot' v-show = 'showControl' ref = 'dot'
-       @touchstart = 'touchStart'
-       @touchmove = 'touchMove'
-       @touchend = 'touchEnd'
+      <div class = 'dot-wrapper' ref = 'dot'
+        @touchstart = 'touchStart'
+        @touchmove = 'touchMove'
+        @touchend = 'touchEnd'
       >
+        <div class = 'dot' v-show = 'showControl'>
+        </div>
       </div>
     </div>
   </div>
@@ -30,6 +32,9 @@ export default {
   },
   watch: {
     currentTime: function (newVal) {
+      if (this.startX) {
+        return
+      }
       this.progress = this.currentTime / this.duration
       this.$refs.cur.style['width'] = `${this.progress * document.documentElement.offsetWidth}px`
       this.$refs.dot.style['transform'] = `translateX(${this.progress * document.documentElement.offsetWidth}px)`
@@ -54,6 +59,7 @@ export default {
       this.$refs.cur.style['width'] = `${this.dis}px`
     },
     touchEnd (e) {
+      this.startX = 0
       this.$emit('hideControl', this.dis / document.documentElement.offsetWidth)
     }
   }
@@ -74,13 +80,22 @@ export default {
       left 0
       height 2.1px
       width 0px
-      .dot
-        height 15px
-        width 15px
+      .dot-wrapper
+        height 30px
+        width 30px
         position relative
-        bottom 6px
-        left -7.5px
-        border-radius 50%
+        bottom 13px
+        left -13.5px
+        display flex
+        align-items center
+        justify-content center
         z-index 30
-        background-color red
+        .dot
+          height 15px
+          width 15px
+          // position relative
+          // bottom 6px
+          // left -7.5px
+          border-radius 50%
+          background-color red
 </style>

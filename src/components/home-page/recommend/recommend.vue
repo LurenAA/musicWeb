@@ -60,6 +60,7 @@
       </div>
       <div class = 'new-song-recom'>
         <recom-head @click="_initRecomList(newSongList, recomList)"></recom-head>
+        <loading v-show = '!recomList.length'></loading>
         <ul class = 'recom-list'>
           <li v-for = '(item, index) in recomList' :key = index>
             <div class = 'pic-div'>
@@ -80,11 +81,12 @@
               <i class = 'iconfont'>&#xe679;</i>
             </div>
           </li>
-          <see-more></see-more>
         </ul>
+        <see-more></see-more>
       </div>
       <div class = 'mv-list'>
         <recom-head name = 'MV推荐' @click="_initRecomList(theMvList,mvList)"></recom-head>
+        <loading v-show = '!mvList.length'></loading>
         <ul>
           <li v-for = '(item, index) in mvList' :key = 'index'
            class = 'mv-mem' @click = 'seeMvDetail (item)'>
@@ -121,6 +123,7 @@ import recomHead from 'base/recom-head/recom-head'
 import seeMore from 'base/see-more/see-more'
 // import { jsonp, mvParams } from 'common/js/util/jsonp'
 import { mapMutations } from 'vuex'
+import loading from 'base/loading/loading'
 
 export default {
   name: 'recommend',
@@ -146,46 +149,40 @@ export default {
     }
   },
   created () {
-    json('http://132.232.249.69:3000/home/recom', 'GET').then(res => {
-      let x = JSON.parse(res)
-      console.log(x)
-      this.slider = x.focus.data.content
-      this.sliderFlag = true
-      this.newSongList = x.new_song.data.song_list
-      this._initRecomList(this.newSongList, this.recomList)
-      this.scrollY = new MScroll(this.$refs.containerY, {
-        loop: false,
-        slider: false,
-        scrollX: false,
-        scrollY: true
+    json('http://132.232.249.69:3000/home/recom', 'GET')
+      .then(res => {
+        let x = JSON.parse(res)
+        console.log(x)
+        this.slider = x.focus.data.content
+        this.sliderFlag = true
+        this.newSongList = x.new_song.data.song_list
+        this._initRecomList(this.newSongList, this.recomList)
+        this._initMScroll()
+        // return json('http://132.232.249.69:3000/home/mvlist', 'GET')
+      }, err => {
+        if (err) {
+          console.log(err)
+        }
       })
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(() => {
-        this.scrollY.refresh()
-        // this.finishFlag = true
-      }, 2500)
-    }).catch(err => {
-      if (err) {
-        console.log(err)
-      }
-    })
-    json('http://132.232.249.69:3000/home/mvlist', 'GET').then(res => {
-      let x = JSON.parse(res)
-      console.log(x)
-      this.theMvList = x.mv_list.data.list
-      this._initRecomList(this.theMvList, this.mvList)
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(() => { this.scrollY.refresh() }, 1500)
-    })
+
+    json('http://132.232.249.69:3000/home/mvlist', 'GET')
+      .then(res => {
+        let x = JSON.parse(res)
+        console.log(x)
+        this.theMvList = x.mv_list.data.list
+        this._initRecomList(this.theMvList, this.mvList)
+        this._initMScroll()
+      }, err => {
+        if (err) {
+          console.log(err)
+        }
+      })
   },
   components: {
     slider,
     recomHead,
-    seeMore
+    seeMore,
+    loading
   },
   methods: {
     _initRecomList (base, target) {
@@ -215,7 +212,24 @@ export default {
     },
     ...mapMutations({
       changeMv: 'CHANGE_MV'
-    })
+    }),
+    _initMScroll () {
+      if (!this.scrollY) {
+        this.scrollY = new MScroll(this.$refs.containerY, {
+          loop: false,
+          slider: false,
+          scrollX: false,
+          scrollY: true
+        })
+      }
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.scrollY.refresh()
+        // this.finishFlag = true
+      }, 1500)
+    }
   }
 }
 </script>
@@ -261,11 +275,13 @@ export default {
     right 0
     overflow hidden
     .mv-list
+      position relative
       background-color #fff
       font-size $font-size-medium-x
       padding 0 15px
       margin-top 10px
       ul
+        min-height 300px
         display flex
         flex-wrap wrap
         justify-content space-between
@@ -307,8 +323,9 @@ export default {
       background-color #fff
       font-size $font-size-medium
       padding 0 15px
-      min-height 300px
+      position relative
       .recom-list
+        min-height 250px
         li
           padding 8px 0
           display flex

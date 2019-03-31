@@ -126,7 +126,8 @@ export default function initMixin (MScroll) {
       let wrapperHeight = this.wrapper.offsetHeight
       let scrollerHeight = this.scroller.offsetHeight
 
-      this.maxScrollY = wrapperHeight - scrollerHeight
+      let tmp = wrapperHeight - scrollerHeight
+      this.maxScrollY = tmp < 0 ? tmp : 0
       this.minScrollY = 0
     }
   }

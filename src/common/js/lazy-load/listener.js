@@ -49,9 +49,8 @@ export class Listener {
     }
 
     newImage.onerror = function () {
-      // console.log('error')
-      // _this.state = type.error
-      // _this._elrender()
+      _this.state = type.error
+      _this._elrender()
       console.log(1)
       // _this.loadPicAsynch()
     }
