@@ -23,7 +23,7 @@
                   <img v-lazy ='item.cover_pic'>
                 </div>
                 <div class = 'img-title-des'>
-                  <h1>{{item.name}}</h1>
+                  <h1 ref = 'item-title'>{{item.name}}</h1>
                   <span>{{formatTime(item.duration)}} by {{sliceSingersName(item.singers)}}</span>
                 </div>
               </li>
@@ -50,6 +50,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import json from 'api/json'
 import loading from 'base/loading/loading'
 import MScroll from 'common/js/min-slider/index'
+import clamp from 'common/js/clamp/index'
 
 export default {
   name: 'mv-detail',
@@ -101,9 +102,9 @@ export default {
     },
     changeMvUrl: function () {
       if (this.mvIndex === this.availableMvUrl.length) {
-        this.mvUrl = 'error'
+        this.$set(this, 'mvUrl', 'error')
       } else {
-        this.mvUrl = this.availableMvUrl[this.mvIndex++]
+        this.$set(this, 'mvUrl', this.availableMvUrl[this.mvIndex++])
       }
     },
     change: function () {
@@ -136,6 +137,7 @@ export default {
         .then(res => {
           this.playList = res.getMvUrl.data[Object.keys(res.getMvUrl.data)[0]].mp4
           this._findavailable()
+          this.mvIndex = 0
           this.changeMvUrl()
         })
         .catch(err => {
@@ -147,7 +149,10 @@ export default {
         this.releventFlag = true
         setTimeout(() => {
           this.MScroll.refresh()
-        }, 300)
+          this.$refs['item-title'].forEach(value => {
+            clamp(value, {})
+          })
+        }, 200)
       }).catch(err => {
         console.log(err)
       })
@@ -213,6 +218,7 @@ export default {
             align-items center
             padding 5px 0
             .img-div
+              flex-shrink 0
               overflow hidden
               border-radius 5px
               width 120px
@@ -225,18 +231,27 @@ export default {
               flex 1
               display flex
               flex-direction column
+              overflow hidden
               h1
                 font-size $font-size-large
+                line-height 1.2
                 color #000
-                max-height 36px
-                overflow hidden
+                // max-height 36px
+                // display: -webkit-box;
+                // -webkit-box-orient: vertical;
+                // -webkit-line-clamp: 2;
+                // overflow: hidden;
                 padding-right 25px
               span
-                margin-top 15px
+                overflow hidden
+                text-overflow ellipsis
+                white-space nowrap
+                margin-top 10px
       .title-div
         padding 0 20px 20px
         background-color #fff
         .title
+          line-height 1.3
           padding 15px 0 12px
           font-size $font-size-large-x
         .title-des

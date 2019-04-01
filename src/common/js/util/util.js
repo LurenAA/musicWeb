@@ -15,7 +15,11 @@ export function sliceSingersName (singer) {
   singer.forEach(value => {
     nameString += value.name + '/'
   })
-  return nameString.substring(0, nameString.length - 1)
+  let res = nameString.substring(0, nameString.length - 1)
+  if (!res.length) {
+    return '此账号已注销'
+  }
+  return res
 }
 
 export function formatTime (time) {

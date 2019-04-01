@@ -6,7 +6,6 @@ import router from './router'
 import fastClick from 'fastclick'
 import lazyLoad from './common/js/lazy-load/index'
 import store from './store/index'
-
 import 'babel-polyfill'
 // import VConsole from 'vconsole'
 

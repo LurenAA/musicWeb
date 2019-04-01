@@ -6,7 +6,7 @@
           <div class = 'icon-div' @click = 'back'>
             <i class = 'iconfont'>&#xe644;</i>
           </div>
-          <h1>{{ mvInfo.title }}</h1>
+          <h1>{{ mvInfo.title || mvInfo.name }}</h1>
           <div class = 'icon-div'>
             <i class = 'iconfont'>&#xe611;</i>
           </div>
@@ -167,6 +167,8 @@ export default {
         this.$refs.video.load()
         this.$refs['rota-icon'].style['animation-play-state'] = 'running'
         this.palyState = 'loading'
+        this.mvInfo = this.mv
+        this.showControl = true
         this.checkUrl()
       }
     }
