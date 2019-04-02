@@ -1,6 +1,6 @@
 <template>
   <div class = 'container'>
-    <div class = 'left'>
+    <div class = 'left' @click = 'clickOne'>
       <i class = 'iconfont'>&#xe67e;</i>
     </div>
     <div class = 'middle'>
@@ -17,7 +17,12 @@
 
 <script>
 export default {
-  name: 'home-head'
+  name: 'home-head',
+  methods: {
+    clickOne (e) {
+      this.$emit('clickOne', e)
+    }
+  }
 }
 </script>
 

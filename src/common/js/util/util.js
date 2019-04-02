@@ -16,9 +16,6 @@ export function sliceSingersName (singer) {
     nameString += value.name + '/'
   })
   let res = nameString.substring(0, nameString.length - 1)
-  if (!res.length) {
-    return '此账号已注销'
-  }
   return res
 }
 

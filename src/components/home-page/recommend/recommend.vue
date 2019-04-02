@@ -219,7 +219,8 @@ export default {
           loop: false,
           slider: false,
           scrollX: false,
-          scrollY: true
+          scrollY: true,
+          dispatchClick: true
         })
       }
       if (this.timer) {
@@ -230,6 +231,17 @@ export default {
         // this.finishFlag = true
       }, 1500)
     }
+  },
+  activated () {
+    if (this.scrollY) {
+      this.scrollY.enable()
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (this.scrollY) {
+      this.scrollY.disable()
+    }
+    next()
   }
 }
 </script>

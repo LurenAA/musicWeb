@@ -24,7 +24,7 @@
                 </div>
                 <div class = 'img-title-des'>
                   <h1 ref = 'item-title'>{{item.name}}</h1>
-                  <span>{{formatTime(item.duration)}} by {{sliceSingersName(item.singers)}}</span>
+                  <span>{{formatTime(item.duration)}} by {{sliceSingersName(item.singers) || item.uploader_nick}}</span>
                 </div>
               </li>
             </ul>
@@ -80,6 +80,11 @@ export default {
   },
   activated () {
     this._initAllThings()
+  },
+  deactivated () {
+    if (this.MScroll) {
+      this.MScroll.disable()
+    }
   },
   data () {
     return {
@@ -147,12 +152,19 @@ export default {
         res = JSON.parse(res)
         this.relevantMv = res.other.data.list.slice(0, 8)
         this.releventFlag = true
-        setTimeout(() => {
+        setTimeout(function () {
+          if (this.$refs['item-title']) {
+            this.$refs['item-title'].forEach(value => {
+              clamp(value, {
+                clamp: 2
+              })
+            })
+          }
+        }.bind(this), 20)
+        setTimeout(function () {
+          this.MScroll.enable()
           this.MScroll.refresh()
-          this.$refs['item-title'].forEach(value => {
-            clamp(value, {})
-          })
-        }, 200)
+        }.bind(this), 200)
       }).catch(err => {
         console.log(err)
       })
@@ -163,7 +175,8 @@ export default {
       loop: false,
       slider: false,
       scrollX: false,
-      scrollY: true
+      scrollY: true,
+      dispatchClick: true
     })
   }
 }
@@ -173,7 +186,7 @@ export default {
   @import '~common/css/index.styl'
   .v-enter
   .v-leave-to
-    transform translateX(100%)
+    transform translateX(100%) translateZ(0px)
   .v-enter-active
   .v-leave-active
     transition all 0.5s
@@ -198,7 +211,7 @@ export default {
         margin-top 10px
         background-color #fff
         padding 0 15px 5px
-        min-height 200px
+        min-height 150px
         .mv-comment
           box-sizing border-box
           padding 22px 0 12px

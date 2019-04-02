@@ -9,7 +9,8 @@ const defaultOptions = {
   threshold: 0.2,
   slider: false,
   scrollX: false,
-  scrollY: false
+  scrollY: false,
+  dispatchClick: false
 }
 
 export default function initMixin (MScroll) {
@@ -18,7 +19,7 @@ export default function initMixin (MScroll) {
     for (let x in options) {
       this.options[x] = options[x]
     }
-
+    this.enable()
     this._addInitialDom()
     this._watchTransition()
     this.x = 0
@@ -66,6 +67,9 @@ export default function initMixin (MScroll) {
   }
 
   MScroll.prototype.handleEvent = function (e) {
+    if (!this.able) {
+      return
+    }
     switch (e.type) {
       case 'touchstart':
         this._start(e)
@@ -89,6 +93,9 @@ export default function initMixin (MScroll) {
   }
 
   MScroll.prototype._dispatchClick = function (e) {
+    if (!this.options.dispatchClick) {
+      return
+    }
     let evt = new Event('click', {'bubbles': true, 'cancelable': false})
     // evt.initEvent('click', true, false)
     e.target.dispatchEvent(evt)
@@ -158,5 +165,13 @@ export default function initMixin (MScroll) {
       subtree: true,
       attributes: true
     })
+  }
+
+  MScroll.prototype.enable = function () {
+    this.able = true
+  }
+
+  MScroll.prototype.disable = function () {
+    this.able = false
   }
 }

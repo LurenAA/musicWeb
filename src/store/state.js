@@ -1,5 +1,6 @@
 var state = {
-  mv: null
+  mv: null,
+  ifShowPlayer: false
 }
 
 export default state

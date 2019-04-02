@@ -1,6 +1,6 @@
 <template>
   <div class = 'app'>
-    <home-head></home-head>
+    <home-head @clickOne = 'clickOne'></home-head>
     <home-tabs></home-tabs>
     <app-bottom></app-bottom>
     <keep-alive>
@@ -13,12 +13,21 @@
 import homeHead from 'base/home-head/home-head'
 import homeTabs from 'base/home-tabs/home-tabs'
 import appBottom from 'base/app-bottom/app-bottom'
+import { mapMutations } from 'vuex'
 export default {
   name: 'home-page',
   components: {
     homeHead,
     homeTabs,
     appBottom
+  },
+  methods: {
+    clickOne (e) {
+      this.triggerShow(true)
+    },
+    ...mapMutations({
+      'triggerShow': 'CHANGE_IFSHOWPLAYER'
+    })
   }
 }
 </script>

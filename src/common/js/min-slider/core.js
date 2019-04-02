@@ -2,6 +2,9 @@ import { getComputedPos, momentum } from './util'
 export default function coreMixin (MScroll) {
   MScroll.prototype._start = function (e) {
     // console.log(1)
+    if (!this.able) {
+      return
+    }
     this.stop()
     e.preventDefault()
     e.stopPropagation()
@@ -20,7 +23,7 @@ export default function coreMixin (MScroll) {
   }
 
   MScroll.prototype._move = function (e) {
-    if (!this._initial) {
+    if (!this._initial || !this.able) {
       return
     }
     e.preventDefault()
@@ -74,7 +77,7 @@ export default function coreMixin (MScroll) {
   }
 
   MScroll.prototype._end = function (e) {
-    if (!this._initial) {
+    if (!this._initial || !this.able) {
       return
     }
     // console.log('end')
@@ -84,7 +87,7 @@ export default function coreMixin (MScroll) {
     this.isInTransition = false
     let timeDif = +new Date() - this.startTime
     if (Math.abs(this.x - this.startX) < 3 && Math.abs(this.y - this.startY) < 3 && timeDif < 100) {
-      console.log('click')
+      // console.log('click')
       this._dispatchClick(e)
       return
     }
