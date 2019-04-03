@@ -1,6 +1,6 @@
 <template>
   <div class = 'container'>
-    <div class = 'left' @click = 'clickOne'>
+    <div class = 'left' @click = 'clickOne' ref = 'item'>
       <i class = 'iconfont'>&#xe67e;</i>
     </div>
     <div class = 'middle'>
@@ -22,6 +22,13 @@ export default {
     clickOne (e) {
       this.$emit('clickOne', e)
     }
+  },
+  created () {
+    let _this = this
+    window.addEventListener('load', function abc () {
+      _this.$emit('load', _this.$refs.item)
+      window.removeEventListener('load', abc)
+    })
   }
 }
 </script>
@@ -34,6 +41,9 @@ export default {
     background linear-gradient(to right, #5922da , #b428ef)
     display flex
     align-items center
+    .left
+      position relative
+      z-index 30
     .left,
     .right
       width $size(69)
@@ -43,7 +53,7 @@ export default {
         height $size(32)
         line-height $size(32)
         margin 0 auto
-        color #fff
+        color #000
         display block
     .middle
       flex 1

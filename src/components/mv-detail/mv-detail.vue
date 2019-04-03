@@ -64,11 +64,7 @@ export default {
     ])
   },
   beforeRouteEnter (to, from, next) {
-    next(vm => {
-      if (from.path === '/') {
-        vm.$router.push({name: 'home-page'})
-      }
-    })
+    from.path === '/' ? next({name: 'home-page'}) : next()
   },
   updated () {
     this.$nextTick(() => {
@@ -79,6 +75,9 @@ export default {
     })
   },
   activated () {
+    if (!this.MScroll) {
+      this.initMScroll()
+    }
     this._initAllThings()
   },
   deactivated () {
@@ -95,7 +94,8 @@ export default {
       updateDate: '2019-1-1',
       relevantMv: [],
       releventFlag: false,
-      lastVid: ''
+      lastVid: '',
+      redirectFlag: false
     }
   },
   methods: {
@@ -168,16 +168,22 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    initMScroll () {
+      if (!this.$refs.des) {
+        return
+      }
+      this.MScroll = new MScroll(this.$refs.des, {
+        loop: false,
+        slider: false,
+        scrollX: false,
+        scrollY: true,
+        dispatchClick: true
+      })
     }
   },
   mounted () {
-    this.MScroll = new MScroll(this.$refs.des, {
-      loop: false,
-      slider: false,
-      scrollX: false,
-      scrollY: true,
-      dispatchClick: true
-    })
+    this.initMScroll()
   }
 }
 </script>

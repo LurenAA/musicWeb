@@ -1,19 +1,27 @@
 <template>
   <transition name = 'music'>
-    <div v-show = 'this.ifShowPlayer' class = 'container'>
+    <div v-show = 'this.ifShowPlayer' class = 'container' @click = 'func1'>
 
     </div>
   </transition>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'music-page',
   computed: {
     ...mapGetters([
       'ifShowPlayer'
     ])
+  },
+  methods: {
+    func1 () {
+      this.changeShow(!this.ifShowPlayer)
+    },
+    ...mapMutations({
+      changeShow: 'CHANGE_IFSHOWPLAYER'
+    })
   }
 }
 </script>
@@ -24,7 +32,7 @@ export default {
     opacity 0
   .music-enter-active,
   .music-leave-active
-    transition all 0.5s
+    transition all 0.8s
   .container
     position fixed
     top 0
