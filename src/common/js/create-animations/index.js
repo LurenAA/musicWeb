@@ -73,13 +73,14 @@ export default class animations {
     this.animationsList[name] = opt
   }
 
-  runAnimation (el, name) {
+  runAnimation (el, name, fn) {
     if (!this.animationsList[name] || !el) {
       console.error('do not has this animation or el')
       return
     }
-    if (this.animationsList[name].clearAnimationAfter) {
-      el.addEventListener('animationend', this)
+    el.addEventListener('animationend', this)
+    if (fn) {
+      this.fn = fn
     }
     addStyleAnimation(el, this.animationsList[name])
   }
@@ -87,8 +88,18 @@ export default class animations {
   handleEvent (e) {
     if (e.type === 'animationend') {
       e.target.removeEventListener('animationend', this)
-      e.target.style[animation] = ''
+      if (this.fn) {
+        this.fn()
+        this.fn = null
+      }
+      if (this.clearAnimationAfter) {
+        e.target.style[animation] = ''
+      }
     }
+  }
+
+  resetElement (e) {
+    e.target.style[animation] = ''
   }
 
   destroy () {

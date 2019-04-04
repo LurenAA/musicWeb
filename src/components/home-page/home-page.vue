@@ -14,6 +14,7 @@ import homeHead from 'base/home-head/home-head'
 import homeTabs from 'base/home-tabs/home-tabs'
 import appBottom from 'base/app-bottom/app-bottom'
 import CreateAnimations from 'common/js/create-animations/index'
+import Boom from 'common/js/boomjs/boom'
 import { mapMutations } from 'vuex'
 
 export default {
@@ -31,8 +32,10 @@ export default {
   },
   methods: {
     clickOne (e) {
-      this.triggerShow(true)
-      this.createAnimations.runAnimation(this.clickPlayerIcon, 'move')
+      this.createAnimations.runAnimation(this.clickPlayerIcon, 'move', function () {
+        this.triggerShow(false) // change soon
+        this.boom = new Boom(this.clickPlayerIcon)
+      }.bind(this))
     },
     ...mapMutations({
       'triggerShow': 'CHANGE_IFSHOWPLAYER'
@@ -51,15 +54,15 @@ export default {
           },
           '80%': {
             pos: [distPos.x, distPos.y],
-            scale: 5
+            scale: 3
           },
           '100%': {
             pos: [distPos.x, distPos.y],
-            scale: 1
+            scale: 5
           }
         },
         duration: 500,
-        clearAnimationAfter: true
+        fillMode: 'forwards'
       })
     }
   }

@@ -47,6 +47,7 @@ export default {
     .left,
     .right
       width $size(69)
+      text-align center
       i
         font-size $size(32)
         width $size(32)
@@ -54,7 +55,6 @@ export default {
         line-height $size(32)
         margin 0 auto
         color #000
-        display block
     .middle
       flex 1
       position relative

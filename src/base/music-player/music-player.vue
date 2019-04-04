@@ -32,12 +32,12 @@ export default {
     opacity 0
   .music-enter-active,
   .music-leave-active
-    transition all 0.8s
+    transition all 0.3s
   .container
     position fixed
     top 0
     left 0
     right 0
     bottom 0
-    background-color blue
+    background-color #000
 </style>
