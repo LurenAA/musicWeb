@@ -5,46 +5,150 @@
         <div class = 'iconback' @click = 'clickFunc1'>
           <i class = 'iconfont'>&#xe644;</i>
         </div>
-        <h1></h1>
+        <div class = 'music-title'>
+          <h1>{{ this.song.name }}</h1>
+          <h2>{{ this.song.singer}}</h2>
+        </div>
         <div class = 'iconback' @click = 'clickFunc1'>
           <i class = 'iconfont'>&#xe611;</i>
         </div>
       </div>
+      <div class = 'lyric-and-circle'>
+        <div class = 'circle' ref = 'circle'>
+          <img :src = 'this.song.pic'>
+        </div>
+      </div>
+      <ul class = 'hots-icons'>
+        <li>
+          <i class = 'iconfont'>&#xeca1;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe794;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe6a7;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe62b;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe653;</i>
+        </li>
+      </ul>
+      <div class = 'bar-wrapper'>
+        <span>{{ formatTime(currentTime) }}</span>
+        <progress-bar class = 'bar'
+          :showControl = 'true' :barHeight = '4'
+          :duration = 'duration' :currentTime = 'currentTime'
+          @hideControl = 'hideControl'
+        ></progress-bar>
+        <span>{{ formatTime(duration) }}</span>
+      </div>
+      <ul class = 'buttons'>
+        <li>
+          <i class = 'iconfont'>&#xe66d;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe610;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe606;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe612;</i>
+        </li>
+        <li>
+          <i class = 'iconfont'>&#xe663;</i>
+        </li>
+      </ul>
+      <audio :src = 'song.url' ref = 'audio' @canplay="handleCanplay"
+       @timeupdate = 'timeUpdate'
+      ></audio>
     </div>
   </transition>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import progressBar from 'base/progress-bar/progress-bar'
+import { formatTime } from 'common/js/util/util'
 export default {
   name: 'music-page',
+  data: function () {
+    return {
+      duration: 0,
+      currentTime: 0
+    }
+  },
+  components: {
+    progressBar
+  },
   computed: {
     ...mapGetters([
-      'ifShowPlayer'
+      'ifShowPlayer',
+      'song'
     ])
   },
   methods: {
+    formatTime (time) {
+      return formatTime(time)
+    },
     clickFunc1 () {
       this.changeShow(!this.ifShowPlayer)
     },
     ...mapMutations({
       changeShow: 'CHANGE_IFSHOWPLAYER'
-    })
+    }),
+    handleCanplay (e) {
+      e.target.play()
+      this.$set(this, 'duration', e.target.duration)
+      this.$set(this, 'currentTime', e.target.currentTime)
+    },
+    timeUpdate (e) {
+      this.$set(this, 'currentTime', e.target.currentTime)
+    },
+    hideControl (e) {
+      this.$refs.audio.currentTime = e * this.duration
+    }
+  },
+  watch: {
+    ifShowPlayer: function (newVal) {
+      if (newVal === true) {
+        setTimeout(function () {
+          this.$refs.circle.style.height = this.$refs.circle.style.width = window.innerHeight * 0.4 + 'px'
+          this.$refs.circle.style.left = (window.innerWidth - parseInt(this.$refs.circle.style.width) - 18) / 2 + 'px'
+        }.bind(this), 100)
+      }
+    },
+    'song.url': function (newVal) {
+      this.$refs.audio.load()
+    }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
   @import '~common/css/index'
+  @keyframes rota {
+    from {
+      transform: rotate(0deg)
+    }
+    to{
+      transform: rotate(360deg)
+    }
+  }
   .music-enter,
   .music-leave-to
     opacity 0
     .header
-      transform translateY(-100%)
+      transform translateY(-100%) translateZ(0px)
+    .buttons
+      transform translateY(100%) translateZ(0px)
   .music-enter-active,
   .music-leave-active
-    transition all 0.3s
+    transition all 0.4s
     .header
+    .buttons
       transition all 0.4s
   .container
     z-index 22
@@ -54,18 +158,86 @@ export default {
     right 0
     bottom 0
     background-image linear-gradient(to bottom,#747474,#868686,#747474,#595959,#404040)
+    .bar-wrapper
+      display flex
+      width 90%
+      margin 0 auto 20px
+      vertical-align middle
+      line-height 4px
+      .bar
+        flex 1
+        margin 0 10px
+      span
+        color #b6b6b7
+    .hots-icons
+      display flex
+      padding 0 25px
+      margin 10px 0 30px
+      li
+        color #c4c4c4
+        flex 1
+        text-align center
+        i
+          font-size $font-size-large-x
+    .buttons
+      display flex
+      align-items center
+      li
+        text-align center
+        flex 1
+        &:first-child
+        &:nth-child(5)
+          color #979797
+          i
+            font-size $font-size-large-x
+        &:nth-child(2)
+        &:nth-child(4)
+          color #d3d3d3
+          i
+            font-size 25px
+        &:nth-child(3)
+          color #d3d3d3
+          i
+            font-size 38px
+    .lyric-and-circle
+      height 440px
+      .circle
+        position absolute
+        top 18%
+        // left 50%
+        // transform translateX(-50%)
+        border-radius 50%
+        overflow hidden
+        border 9px solid #808080
+        animation rota infinite 15s linear
+        animation-play-state paused
+        img
+          width 100%
     .header
       height $remSize(40)
       display flex
       padding 0 10px
       align-items center
       border-bottom 1px solid #858585
-      h1
+      .music-title
         flex 1
-        text-align center
-        white-space nowrap
+        display flex
+        flex-direction column
+        justify-content center
+        padding 0 80px 0 15px
         overflow hidden
-        text-overflow ellipsis
+        h1
+          white-space nowrap
+          overflow hidden
+          text-overflow ellipsis
+          font-size $font-size-medium-x
+          color #fff
+        h2
+          margin-top 4px
+          white-space nowrap
+          overflow hidden
+          text-overflow ellipsis
+          color #9f9f9f
       .iconback
         padding 5px 0
         i

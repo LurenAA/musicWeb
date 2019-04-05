@@ -62,7 +62,7 @@
         <recom-head @click="_initRecomList(newSongList, recomList)"></recom-head>
         <loading v-show = '!recomList.length'></loading>
         <ul class = 'recom-list'>
-          <li v-for = '(item, index) in recomList' :key = index>
+          <li v-for = '(item, index) in recomList' :key = index @click = 'chooseSong(item)'>
             <div class = 'pic-div'>
               <div class = 'pic-play'>
                 <i class = 'iconfont'>&#xe66a;</i>
@@ -124,6 +124,7 @@ import seeMore from 'base/see-more/see-more'
 // import { jsonp, mvParams } from 'common/js/util/jsonp'
 import { mapMutations } from 'vuex'
 import loading from 'base/loading/loading'
+import Song from 'common/js/song/song'
 
 export default {
   name: 'recommend',
@@ -212,7 +213,10 @@ export default {
       this.$router.push({name: 'mv-detail-page', params: {id: item.vid}})
     },
     ...mapMutations({
-      changeMv: 'CHANGE_MV'
+      changeMv: 'CHANGE_MV',
+      setSong: 'SET_SONG',
+      showFlag: 'CHANGE_IFSHOWPLAYER',
+      setSongUrl: 'SET_SONGURL'
     }),
     _initMScroll () {
       if (!this.scrollY) {
@@ -245,6 +249,18 @@ export default {
         }
         this.scrollY.refresh()
       }
+    },
+    chooseSong (item) {
+      this.setSong(new Song({
+        name: item.name,
+        singer: sliceSingersName(item.singer),
+        pic: item.picUrlSour,
+        mid: item.mid
+      }))
+      json(`http://132.232.249.69:3000/home/song?mid=${item.mid}`, 'GET').then(res => {
+        this.setSongUrl(res)
+      })
+      this.showFlag(true)
     }
   },
   activated () {

@@ -6,6 +6,12 @@ let mutations = {
   },
   [type.CHANGE_IFSHOWPLAYER] (state, ifshow) {
     state.ifShowPlayer = ifshow
+  },
+  [type.SET_SONG] (state, param) {
+    state.song = param
+  },
+  [type.SET_SONGURL] (state, param) {
+    state.song.url = param
   }
 }
 
