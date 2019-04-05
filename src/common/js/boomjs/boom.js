@@ -1,5 +1,7 @@
 function setOptions (pos, el) {
-
+  el.style.transition = 'all 0.3s'
+  el.style.transform = `translate(${pos.x}px,${pos.y}px)`
+  el.style.opacity = 0
 }
 
 export default class Boom {
@@ -25,22 +27,25 @@ export default class Boom {
   }
 
   runBoom () {
-    let centerX = this.elInfo.top + this.elInfo.height / 2
-    let centerY = this.elInfo.left + this.elInfo.width / 2
+    let centerY = this.elInfo.top + this.elInfo.height / 2
+    let centerX = this.elInfo.left + this.elInfo.width / 2
     let nodeChilren = this.cloneNode.children
-    let x, y, k, b, distX, distY
-    for (let i in nodeChilren) {
-      x = nodeChilren[i].style.width / 2 + nodeChilren[i].style.left
-      y = nodeChilren[i].style.height / 2 + nodeChilren[i].style.top
-      k = (y - centerY) / (x - centerX)
-      b = centerY - k * centerX
-      distY = 2 * y - centerY
-      distX = (distY - b) / k
+    let x, y, distX, distY, isTop, isLeft
+    for (let i = 0, len = nodeChilren.length; i < len; i++) {
+      x = parseInt(nodeChilren[i].style.width) / 2 + parseInt(nodeChilren[i].style.left)
+      y = parseInt(nodeChilren[i].style.height) / 2 + parseInt(nodeChilren[i].style.top)
+      isTop = y - centerY < 0
+      isLeft = x - centerX < 0
+      distY = isTop ? centerY - Math.random() * (y + centerY) : centerY + Math.random() * (y + centerY)
+      distX = isLeft ? centerX - Math.random() * (x + centerX) : centerX + Math.random() * (x + centerX)
       setOptions({
         x: distX,
         y: distY
       }, nodeChilren[i])
     }
+    setTimeout(() => {
+      this.cloneNode.remove()
+    }, 400)
   }
 
   cloneNode () {

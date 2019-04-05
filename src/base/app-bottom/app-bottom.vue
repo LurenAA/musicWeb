@@ -57,12 +57,12 @@ export default {
 <style lang="stylus" scoped>
   @import '~common/css/index.styl'
   .container
-    position fixed
+    position absolute
     bottom 0
     left 0
     right 0
     height $size(64)
-    // z-index 10
+    // z-index 20
     display flex
     list-style none
     background-color #fff

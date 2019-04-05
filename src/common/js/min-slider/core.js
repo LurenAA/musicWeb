@@ -7,7 +7,7 @@ export default function coreMixin (MScroll) {
     }
     this.stop()
     e.preventDefault()
-    e.stopPropagation()
+    // e.stopPropagation()
 
     this.startX = this.x
     this.startY = this.y

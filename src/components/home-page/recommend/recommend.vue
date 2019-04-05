@@ -101,8 +101,8 @@
         <see-more></see-more>
       </div>
     </div>
-    <transition name = 'showload'>
-      <div class = 'loading-back-div' v-show = '!finishFlag'>
+    <transition name = 'showload' type = 'transition'>
+      <div class = 'loading-back-div' v-show = '!finishFlag' ref = 'bck'>
         <div class = 'loading-des'>
           <img src = '../1.png'>
           <h1>**音乐</h1>
@@ -149,6 +149,7 @@ export default {
     }
   },
   created () {
+    this.winHeight = window.innerHeight
     json('http://132.232.249.69:3000/home/recom', 'GET')
       .then(res => {
         let x = JSON.parse(res)
@@ -187,7 +188,7 @@ export default {
   methods: {
     _initRecomList (base, target) {
       let numList = []
-      for (let i = 0; i < 4; i++) { // 改
+      for (let i = 0; i < 4; i++) {
         let ifSame = 0
         let newNum
         while (ifSame !== -1) {
@@ -230,12 +231,30 @@ export default {
         this.scrollY.refresh()
         // this.finishFlag = true
       }, 1500)
+    },
+    hanleEvent (e) {
+      if (e.type === 'resize') {
+        if (!this.scrollY) {
+          return
+        }
+        let thisHeight = window.innerHeight
+        if (thisHeight - this.winHeight < -140) {
+          this.$refs.containerY.style['bottom'] = '0'
+        } else {
+          this.$refs.containerY.style['bottom'] = '42.66px'
+        }
+        this.scrollY.refresh()
+      }
     }
   },
   activated () {
     if (this.scrollY) {
       this.scrollY.enable()
     }
+    window.addEventListener('resize', this.hanleEvent)
+  },
+  deactivated () {
+    window.removeEventListener('resize', this.hanleEvent)
   },
   beforeRouteLeave (to, from, next) {
     if (this.scrollY) {
@@ -248,8 +267,22 @@ export default {
 
 <style lang="stylus" scoped>
   @import '~common/css/index.styl'
+  @keyframes Gradient {
+    0% {
+      background-position: 0% 50%
+    }
+    50% {
+      background-position: 100% 50%
+    }
+    100% {
+      background-position: 0% 50%
+    }
+  }
   .loading-back-div
+    background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+    background-size: 400% 400%;
     position fixed
+    animation: Gradient 3s ease infinite;
     top 0
     left 0
     right 0
@@ -259,7 +292,7 @@ export default {
     &.showload-leave-to
       opacity 0
     &.showload-leave-active
-      transition all 0.5s
+      transition opacity 0.5s
     .loading-des
       position absolute
       top 40%
@@ -269,20 +302,21 @@ export default {
         transform scale(1.5)
       h1
         text-align center
-        color #000000
+        color #fff
         &:nth-child(2)
-          font-family YouYuan
+          font-family: SimSun
           font-weight bold
           font-size 40px
           margin-top 40px
         &:nth-child(3)
+          font-family: SimSun
           font-size 18px
           margin-top 12px
   .containerY
     background-color $background-color
     position absolute
     top 1.6rem
-    bottom 0
+    bottom $size(64)
     left 0
     right 0
     overflow hidden

@@ -2,7 +2,7 @@
   <div class = 'app'>
     <home-head @clickOne = 'clickOne' @load = 'getTarget'></home-head>
     <home-tabs></home-tabs>
-    <app-bottom></app-bottom>
+    <app-bottom v-show = 'showBottomFlag'></app-bottom>
     <keep-alive>
       <router-view/>
     </keep-alive>
@@ -24,17 +24,39 @@ export default {
     homeTabs,
     appBottom
   },
+  created () {
+    this.winHeight = window.innerHeight
+  },
+  activated () {
+    window.addEventListener('resize', this.hanleEvent)
+  },
+  deactivated () {
+    window.addEventListener('resize', this.hanleEvent)
+  },
   data () {
     return {
       clickPlayerIcon: {},
-      createAnimations: null
+      createAnimations: null,
+      showBottomFlag: true
     }
   },
   methods: {
+    hanleEvent (e) {
+      if (e.type === 'resize') {
+        let thisHeight = window.innerHeight
+        if (thisHeight - this.winHeight < -140) {
+          this.showBottomFlag = false
+        } else {
+          this.showBottomFlag = true
+        }
+      }
+    },
     clickOne (e) {
       this.createAnimations.runAnimation(this.clickPlayerIcon, 'move', function () {
-        this.triggerShow(false) // change soon
         this.boom = new Boom(this.clickPlayerIcon)
+        setTimeout(() => {
+          this.triggerShow(true)
+        }, 100)
       }.bind(this))
     },
     ...mapMutations({
@@ -73,9 +95,9 @@ export default {
   @import '~common/css/variable'
   @import '~common/css/mixin'
   .app
-    position fixed
+    position absolute
     top 0
     left 0
     right 0
-    bottom $size(64)
+    bottom 0
 </style>

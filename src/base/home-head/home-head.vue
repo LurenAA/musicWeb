@@ -7,7 +7,7 @@
       <div class = 'search-icon'>
         <i class = 'iconfont'>&#xe60b;</i>
       </div>
-      <input placeholder="搜索">
+      <input placeholder="搜索" ref = 'input'>
     </div>
     <div class = 'right'>
       <i class = 'iconfont'>&#xe602;</i>
@@ -21,6 +21,11 @@ export default {
   methods: {
     clickOne (e) {
       this.$emit('clickOne', e)
+    },
+    hanldeEvent (e) {
+      if (e.type === 'touchstart') {
+        this.$refs.input.blur()
+      }
     }
   },
   created () {
@@ -29,6 +34,12 @@ export default {
       _this.$emit('load', _this.$refs.item)
       window.removeEventListener('load', abc)
     })
+  },
+  activated () {
+    document.documentElement.addEventListener('touchstart', this.hanldeEvent)
+  },
+  deactivated () {
+    document.documentElement.removeEventListener('touchstart', this.hanldeEvent)
   }
 }
 </script>
@@ -43,7 +54,7 @@ export default {
     align-items center
     .left
       position relative
-      z-index 30
+      z-index 20
     .left,
     .right
       width $size(69)
