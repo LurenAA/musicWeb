@@ -12,6 +12,9 @@ let mutations = {
   },
   [type.SET_SONGURL] (state, param) {
     state.song.url = param
+  },
+  [type.CHANGE_MUSICPLAYSTATE] (state, param) {
+    state.musicPlayState = param
   }
 }
 

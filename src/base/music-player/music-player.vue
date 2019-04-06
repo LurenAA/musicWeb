@@ -52,7 +52,7 @@
           <i class = 'iconfont'>&#xe610;</i>
         </li>
         <li @click="playButton">
-          <i class = 'iconfont'>&#xe606;</i>
+          <i class = 'iconfont' v-html = 'playStateIcon'></i>
         </li>
         <li>
           <i class = 'iconfont'>&#xe612;</i>
@@ -64,6 +64,7 @@
       <audio :src = 'audioSrc' ref = 'audio' @canplay="handleCanplay"
        @timeupdate = 'timeUpdate'
       ></audio>
+      <tip :flag = 'tipFlag' :string = '"vip音乐请到官方app聆听"'></tip>
     </div>
   </transition>
 </template>
@@ -73,33 +74,48 @@ import { mapGetters, mapMutations } from 'vuex'
 import progressBar from 'base/progress-bar/progress-bar'
 import { formatTime } from 'common/js/util/util'
 import json from 'api/json.js'
+import tip from 'base/false-tip/false-tip'
 export default {
   name: 'music-page',
   data: function () {
     return {
       duration: 0,
       currentTime: 0,
-      lastSong: null
+      lastSong: null,
+      tipFlag: false
     }
   },
   components: {
-    progressBar
+    progressBar,
+    tip
   },
   computed: {
     ...mapGetters([
       'ifShowPlayer',
-      'song'
+      'song',
+      'musicPlayState'
     ]),
     audioSrc () {
       if (this.song) {
         return this.song.url
       }
       return ''
+    },
+    playStateIcon () {
+      if (!this.musicPlayState) {
+        return '&#xe606;'
+      } else {
+        return '&#xe607;'
+      }
     }
   },
   methods: {
     playButton () {
-      this.$refs.audio.play()
+      if (!this.musicPlayState) {
+        this.changePlayState(true)
+      } else {
+        this.changePlayState(false)
+      }
     },
     formatTime (time) {
       return formatTime(time)
@@ -109,7 +125,8 @@ export default {
     },
     ...mapMutations({
       changeShow: 'CHANGE_IFSHOWPLAYER',
-      setSongUrl: 'SET_SONGURL'
+      setSongUrl: 'SET_SONGURL',
+      changePlayState: 'CHANGE_MUSICPLAYSTATE'
     }),
     handleCanplay (e) {
       this.$set(this, 'duration', parseInt(e.target.duration) || parseInt(this.song.int))
@@ -125,6 +142,15 @@ export default {
     }
   },
   watch: {
+    musicPlayState: function (newVal) {
+      if (newVal) {
+        this.$refs.circle.style['animation-play-state'] = 'running'
+        this.$refs.audio.play()
+      } else {
+        this.$refs.audio.pause()
+        this.$refs.circle.style['animation-play-state'] = 'paused'
+      }
+    },
     ifShowPlayer: function (newVal) {
       if (newVal === true) {
         // setTimeout(function () {
@@ -135,12 +161,23 @@ export default {
       setTimeout(function () {
         if (newVal && (!this.lastSong || this.lastSong.mid !== this.song.mid)) {
           let _this = this
+          this.tipFlag = false
           json(`http://132.232.249.69:3000/home/song?mid=${this.song.mid}`, 'GET').then(res => {
             _this.setSongUrl(res)
             _this.lastSong = _this.song
-            console.log('startLoad')
+            // console.log('startLoad')
+            _this.changePlayState(false)
             _this.$refs.audio.load()
+            _this.$refs.audio.currentTime = 0
           })
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() => {
+            if (this.$refs.audio.readyState === 0) {
+              this.tipFlag = true
+            }
+          }, 1300)
         }
       }.bind(this), 200)
     }
@@ -241,7 +278,7 @@ export default {
     .header
       height $remSize(40)
       display flex
-      padding 0 10px
+      padding 4px 10px 6px
       align-items center
       border-bottom 1px solid #858585
       .music-title

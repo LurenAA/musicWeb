@@ -16,6 +16,9 @@
             <loading v-if = '!releventFlag'></loading>
             <h1 class = 'mv-h1-des'>相关视频</h1>
             <ul v-if = 'releventFlag'>
+              <li v-show = '!relevantMv.length'>
+                抱歉,无相关视频...
+              </li>
               <li v-for = '(item, index) in relevantMv' :key = 'index'
                @click = 'gotoNextOne(item)'
               >

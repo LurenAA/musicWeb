@@ -210,12 +210,14 @@ export default {
     },
     seeMvDetail (item) {
       this.changeMv(item)
+      this.changePlayState(false)
       this.$router.push({name: 'mv-detail-page', params: {id: item.vid}})
     },
     ...mapMutations({
       changeMv: 'CHANGE_MV',
       setSong: 'SET_SONG',
-      showFlag: 'CHANGE_IFSHOWPLAYER'
+      showFlag: 'CHANGE_IFSHOWPLAYER',
+      changePlayState: 'CHANGE_MUSICPLAYSTATE'
     }),
     _initMScroll () {
       if (!this.scrollY) {

@@ -1,5 +1,5 @@
 <template>
-  <div class = 'bar' ref = 'bar'>
+  <div class = 'bar' ref = 'bar' @click = 'clickFunc'>
     <div class = 'cur' ref = 'cur'>
       <div class = 'dot-wrapper' ref = 'dot'
         @touchstart.prevent = 'touchStart'
@@ -46,12 +46,14 @@ export default {
         return
       }
       if (newVal === 0) {
-        this.$refs.cur.style['width'] = '0px'
-        this.$refs.dot.style['transform'] = ''
+        // this.$refs.cur.style['width'] = '0px'
+        // this.$refs.dot.style['transform'] = ''
+        this._changePos(0, 0)
       }
       this.progress = this.currentTime / this.duration
-      this.$refs.cur.style['width'] = `${this.progress * this.$refs.bar.clientWidth}px`
-      this.$refs.dot.style['transform'] = `translateX(${this.progress * this.$refs.bar.clientWidth}px)`
+      // this.$refs.cur.style['width'] = `${this.progress * this.$refs.bar.clientWidth}px`
+      // this.$refs.dot.style['transform'] = `translateX(${this.progress * this.$refs.bar.clientWidth}px)`
+      this._changePos(this.progress * this.$refs.bar.clientWidth, this.progress * this.$refs.bar.clientWidth)
     },
     ifShowPlayer (newVal) {
       this.pos = this.$refs.bar.getBoundingClientRect()
@@ -61,6 +63,7 @@ export default {
           this.$refs.cur.style['height'] = this.barHeight + 'px'
         }
       }
+      this._changePos(this.progress * this.$refs.bar.clientWidth, this.progress * this.$refs.bar.clientWidth)
     }
   },
   data () {
@@ -94,6 +97,15 @@ export default {
       this.inital = false
       this.startX = 0
       this.$emit('hideControl', this.dis / this.$refs.bar.clientWidth)
+    },
+    clickFunc (e) {
+      if (this.pos) {
+        this.$emit('hideControl', (e.x - this.pos.left) / this.$refs.bar.clientWidth)
+      }
+    },
+    _changePos (a, b) {
+      this.$refs.cur.style['width'] = `${a}px`
+      this.$refs.dot.style['transform'] = `translateX(${b}px)`
     }
   }
 }
