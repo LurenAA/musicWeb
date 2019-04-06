@@ -2,9 +2,9 @@
   <div class = 'bar' ref = 'bar'>
     <div class = 'cur' ref = 'cur'>
       <div class = 'dot-wrapper' ref = 'dot'
-        @touchstart = 'touchStart'
-        @touchmove = 'touchMove'
-        @touchend = 'touchEnd'
+        @touchstart.prevent = 'touchStart'
+        @touchmove.prevent = 'touchMove'
+        @touchend.prevent = 'touchEnd'
       >
         <div class = 'dot' v-show = 'showControl'>
         </div>
@@ -45,6 +45,10 @@ export default {
       if (this.startX) {
         return
       }
+      if (newVal === 0) {
+        this.$refs.cur.style['width'] = '0px'
+        this.$refs.dot.style['transform'] = ''
+      }
       this.progress = this.currentTime / this.duration
       this.$refs.cur.style['width'] = `${this.progress * this.$refs.bar.clientWidth}px`
       this.$refs.dot.style['transform'] = `translateX(${this.progress * this.$refs.bar.clientWidth}px)`
@@ -77,8 +81,10 @@ export default {
       }
       this.$emit('showControl')
       this.moveX = e.touches[0].pageX
-      if (this.moveX - this.pos.x < 5 || this.pos.x + this.pos.width - this.moveX < 1) {
-        return
+      if (this.pos) {
+        if (this.moveX - this.pos.x < 5 || this.pos.x + this.pos.width - this.moveX < 1) {
+          return
+        }
       }
       this.dis = this.startPos + this.moveX - this.startX
       this.$refs.dot.style['transform'] = `translateX(${this.dis}px)`

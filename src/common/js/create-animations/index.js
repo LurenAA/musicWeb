@@ -92,7 +92,7 @@ export default class animations {
         this.fn()
         this.fn = null
       }
-      if (this.clearAnimationAfter) {
+      if (this.animationsList[e.target.style['animationName']].clearAnimationAfter) {
         e.target.style[animation] = ''
       }
     }

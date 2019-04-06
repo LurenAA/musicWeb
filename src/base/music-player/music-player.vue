@@ -51,7 +51,7 @@
         <li>
           <i class = 'iconfont'>&#xe610;</i>
         </li>
-        <li>
+        <li @click="playButton">
           <i class = 'iconfont'>&#xe606;</i>
         </li>
         <li>
@@ -61,7 +61,7 @@
           <i class = 'iconfont'>&#xe663;</i>
         </li>
       </ul>
-      <audio :src = 'song.url' ref = 'audio' @canplay="handleCanplay"
+      <audio :src = 'audioSrc' ref = 'audio' @canplay="handleCanplay"
        @timeupdate = 'timeUpdate'
       ></audio>
     </div>
@@ -72,12 +72,14 @@
 import { mapGetters, mapMutations } from 'vuex'
 import progressBar from 'base/progress-bar/progress-bar'
 import { formatTime } from 'common/js/util/util'
+import json from 'api/json.js'
 export default {
   name: 'music-page',
   data: function () {
     return {
       duration: 0,
-      currentTime: 0
+      currentTime: 0,
+      lastSong: null
     }
   },
   components: {
@@ -87,9 +89,18 @@ export default {
     ...mapGetters([
       'ifShowPlayer',
       'song'
-    ])
+    ]),
+    audioSrc () {
+      if (this.song) {
+        return this.song.url
+      }
+      return ''
+    }
   },
   methods: {
+    playButton () {
+      this.$refs.audio.play()
+    },
     formatTime (time) {
       return formatTime(time)
     },
@@ -97,12 +108,14 @@ export default {
       this.changeShow(!this.ifShowPlayer)
     },
     ...mapMutations({
-      changeShow: 'CHANGE_IFSHOWPLAYER'
+      changeShow: 'CHANGE_IFSHOWPLAYER',
+      setSongUrl: 'SET_SONGURL'
     }),
     handleCanplay (e) {
-      e.target.play()
-      this.$set(this, 'duration', e.target.duration)
+      this.$set(this, 'duration', parseInt(e.target.duration) || parseInt(this.song.int))
       this.$set(this, 'currentTime', e.target.currentTime)
+      // console.log('canplay', e.target.duration, this.song.int)
+      // e.target.play()
     },
     timeUpdate (e) {
       this.$set(this, 'currentTime', e.target.currentTime)
@@ -114,14 +127,22 @@ export default {
   watch: {
     ifShowPlayer: function (newVal) {
       if (newVal === true) {
-        setTimeout(function () {
-          this.$refs.circle.style.height = this.$refs.circle.style.width = window.innerHeight * 0.4 + 'px'
-          this.$refs.circle.style.left = (window.innerWidth - parseInt(this.$refs.circle.style.width) - 18) / 2 + 'px'
-        }.bind(this), 100)
+        // setTimeout(function () {
+        this.$refs.circle.style.height = this.$refs.circle.style.width = window.innerHeight * 0.4 + 'px'
+        this.$refs.circle.style.left = (window.innerWidth - parseInt(this.$refs.circle.style.width) - 18) / 2 + 'px'
+        // }.bind(this), 10)
       }
-    },
-    'song.url': function (newVal) {
-      this.$refs.audio.load()
+      setTimeout(function () {
+        if (newVal && (!this.lastSong || this.lastSong.mid !== this.song.mid)) {
+          let _this = this
+          json(`http://132.232.249.69:3000/home/song?mid=${this.song.mid}`, 'GET').then(res => {
+            _this.setSongUrl(res)
+            _this.lastSong = _this.song
+            console.log('startLoad')
+            _this.$refs.audio.load()
+          })
+        }
+      }.bind(this), 200)
     }
   }
 }
@@ -141,16 +162,18 @@ export default {
   .music-leave-to
     opacity 0
     .header
-      transform translateY(-100%) translateZ(0px)
+      transform translate3d(0,-100%,0)
     .buttons
-      transform translateY(100%) translateZ(0px)
+      transform translate3d(0,100%,0)
   .music-enter-active,
   .music-leave-active
-    transition all 0.4s
+    transition all 0.3s
     .header
     .buttons
-      transition all 0.4s
+      transition all 0.3s
   .container
+    display flex
+    flex-direction column
     z-index 22
     position fixed
     top 0
@@ -180,6 +203,7 @@ export default {
         i
           font-size $font-size-large-x
     .buttons
+      margin-bottom 25px
       display flex
       align-items center
       li
@@ -200,7 +224,8 @@ export default {
           i
             font-size 38px
     .lyric-and-circle
-      height 440px
+      // height 440px
+      flex 1
       .circle
         position absolute
         top 18%

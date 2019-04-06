@@ -14,7 +14,7 @@ import homeHead from 'base/home-head/home-head'
 import homeTabs from 'base/home-tabs/home-tabs'
 import appBottom from 'base/app-bottom/app-bottom'
 import CreateAnimations from 'common/js/create-animations/index'
-import Boom from 'common/js/boomjs/boom'
+// import Boom from 'common/js/boomjs/boom'
 import { mapMutations } from 'vuex'
 
 export default {
@@ -53,7 +53,7 @@ export default {
     },
     clickOne (e) {
       this.createAnimations.runAnimation(this.clickPlayerIcon, 'move', function () {
-        this.boom = new Boom(this.clickPlayerIcon)
+      // this.boom = new Boom(this.clickPlayerIcon)
         setTimeout(() => {
           this.triggerShow(true)
         }, 100)
@@ -84,7 +84,8 @@ export default {
           }
         },
         duration: 500,
-        fillMode: 'forwards'
+        // fillMode: 'forwards'
+        clearAnimationAfter: true
       })
     }
   }

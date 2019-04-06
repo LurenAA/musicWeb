@@ -104,8 +104,8 @@
     <transition name = 'showload' type = 'transition'>
       <div class = 'loading-back-div' v-show = '!finishFlag' ref = 'bck'>
         <div class = 'loading-des'>
-          <img src = '../1.png'>
-          <h1>**音乐</h1>
+          <!-- <img src = '../1.png'> -->
+          <h1>xxMusic</h1>
           <h1>让生活充满音乐</h1>
         </div>
       </div>
@@ -122,7 +122,7 @@ import slider from 'base/ownSlider/ownSlider'
 import recomHead from 'base/recom-head/recom-head'
 import seeMore from 'base/see-more/see-more'
 // import { jsonp, mvParams } from 'common/js/util/jsonp'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import loading from 'base/loading/loading'
 import Song from 'common/js/song/song'
 
@@ -215,8 +215,7 @@ export default {
     ...mapMutations({
       changeMv: 'CHANGE_MV',
       setSong: 'SET_SONG',
-      showFlag: 'CHANGE_IFSHOWPLAYER',
-      setSongUrl: 'SET_SONGURL'
+      showFlag: 'CHANGE_IFSHOWPLAYER'
     }),
     _initMScroll () {
       if (!this.scrollY) {
@@ -251,15 +250,17 @@ export default {
       }
     },
     chooseSong (item) {
-      this.setSong(new Song({
-        name: item.name,
-        singer: sliceSingersName(item.singer),
-        pic: item.picUrlSour,
-        mid: item.mid
-      }))
-      json(`http://132.232.249.69:3000/home/song?mid=${item.mid}`, 'GET').then(res => {
-        this.setSongUrl(res)
-      })
+      setTimeout(() => {
+        if (!this.song || item.mid !== this.song.mid) {
+          this.setSong(new Song({
+            name: item.name,
+            singer: sliceSingersName(item.singer),
+            pic: item.picUrlSour,
+            mid: item.mid,
+            int: item.interval
+          }))
+        }
+      }, 100)
       this.showFlag(true)
     }
   },
@@ -277,6 +278,11 @@ export default {
       this.scrollY.disable()
     }
     next()
+  },
+  computed: {
+    ...mapGetters([
+      'song'
+    ])
   }
 }
 </script>
@@ -314,17 +320,17 @@ export default {
       top 40%
       left 50%
       transform translate(-50%,-50%)
-      img
-        transform scale(1.5)
+      // img
+      //   transform scale(1.5)
       h1
         text-align center
         color #fff
-        &:nth-child(2)
+        &:nth-child(1)
           font-family: SimSun
           font-weight bold
           font-size 40px
           margin-top 40px
-        &:nth-child(3)
+        &:nth-child(2)
           font-family: SimSun
           font-size 18px
           margin-top 12px
