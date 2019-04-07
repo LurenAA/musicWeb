@@ -7,6 +7,7 @@ import lazyLoad from './common/js/lazy-load/index'
 import store from './store/index'
 import 'babel-polyfill'
 import VConsole from 'vconsole'
+import storage from 'common/js/storejs/store'
 
 import 'common/css/reset.css'
 import 'common/css/icons.styl'
@@ -20,6 +21,8 @@ Vue.use(lazyLoad, {
   error: require('./common/js/lazy-load/2.jpg'),
   threshold: 0.2
 })
+
+Vue.use(storage)
 
 /* eslint-disable no-new */
 new Vue({
