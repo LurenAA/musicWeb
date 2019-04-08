@@ -24,14 +24,19 @@ export default function install (Vue, options) {
     }
 
     set (key, item) {
-      if (!key || !item) {
+      if (!key || !item || item === {}) {
         return
       }
       this.storage.setItem(key, JSON.stringify(item))
     }
 
     get (key) {
-      return this.storage.getItem(key)
+      let val = this.storage.getItem(key)
+      if (val) {
+        return JSON.parse(val)
+      } else {
+        return val
+      }
     }
 
     add (key, obj) {

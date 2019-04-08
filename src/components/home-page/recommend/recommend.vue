@@ -254,13 +254,14 @@ export default {
     chooseSong (item) {
       setTimeout(() => {
         if (!this.song || item.mid !== this.song.mid) {
-          this.setSong(new Song({
+          let newSong = new Song({
             name: item.name,
             singer: sliceSingersName(item.singer),
             pic: item.picUrlSour,
             mid: item.mid,
             int: item.interval
-          }))
+          })
+          this.setSong(newSong)
         }
       }, 100)
       this.showFlag(true)

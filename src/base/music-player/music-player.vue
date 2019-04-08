@@ -51,7 +51,7 @@
         <li>
           <i class = 'iconfont'>&#xe610;</i>
         </li>
-        <li @click="playButton">
+        <li @click="playButton" ref = 'playbtn'>
           <i class = 'iconfont' v-html = 'playStateIcon'></i>
         </li>
         <li>
@@ -67,16 +67,25 @@
       <tip :flag = 'tipFlag' :string = '"vip音乐请到官方app聆听"'></tip>
       <div class = 'background-c' v-show = 'playListFlag'></div>
       <transition name = 'play-list'>
-        <div class = 'playList' v-show = 'playListFlag'>
+        <div class = 'playList' v-show = 'playListFlag' @click.stop>
           <div class = 'play-list-top'>
             <div>
-              <i></i>
+              <i class = 'iconfont'>&#xe66d;</i>
             </div>
-            <span></span>
+            <span>顺序播放</span>
             <div>
-              <i></i>
+              <i class = 'iconfont'>&#xe6be;</i>
             </div>
           </div>
+          <transition-group tag = 'ul' class = 'play-list-list'>
+            <li v-for = 'item in playList' :key = 'item.mid'>
+              <span>{{item.name}}</span>
+              <span>&nbsp;-&nbsp;{{item.singer}}</span>
+              <div>
+                <i class = 'iconfont'>&#xe687;</i>
+              </div>
+            </li>
+          </transition-group>
         </div>
       </transition>
     </div>
@@ -84,7 +93,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import progressBar from 'base/progress-bar/progress-bar'
 import { formatTime } from 'common/js/util/util'
 import json from 'api/json.js'
@@ -108,7 +117,8 @@ export default {
     ...mapGetters([
       'ifShowPlayer',
       'song',
-      'musicPlayState'
+      'musicPlayState',
+      'playList'
     ]),
     audioSrc () {
       if (this.song) {
@@ -133,9 +143,17 @@ export default {
         e.stopPropagation()
       }
     },
+    ...mapActions([
+      'addSong'
+    ]),
     playButton () {
       if (!this.musicPlayState) {
         this.changePlayState(true)
+        if (navigator.userAgent.indexOf('UCBrower') !== -1) {
+          this.changePlayState(false)
+          return
+        }
+        this.addSong(this.song)
       } else {
         this.changePlayState(false)
       }
@@ -154,6 +172,8 @@ export default {
     handleCanplay (e) {
       this.$set(this, 'duration', parseInt(e.target.duration) || parseInt(this.song.int))
       this.$set(this, 'currentTime', e.target.currentTime)
+      this.$refs.playbtn.style['pointer-events'] = 'auto'
+      this.$refs.playbtn.style['color'] = '#d3d3d3'
       // console.log('canplay', e.target.duration, this.song.int)
       // e.target.play()
     },
@@ -259,6 +279,38 @@ export default {
       background-color #fff
       z-index 30
       border-radius 12px 12px 0 0
+      .play-list-list
+        padding 0 10px
+        li
+          height 40px
+          line-height 40px
+          display flex
+        span
+          &:first-child
+            font-size 14px
+
+          &:nth-child(2)
+            font-size 12px
+            flex 1
+            color rgba(0,0,0,0.55)
+        div
+          i
+            color rgba(0,0,0,0.55)
+            font-size 20px
+      .play-list-top
+        height 30px
+        line-height 30px
+        display flex
+        align-items center
+        padding 3px 10px 3px
+        border-bottom 1px solid rgba(0,0,0,0.07)
+        span
+          flex 1
+          padding 0 8px
+        div
+          text-align center
+          i
+            font-size 24px
       &.play-list-enter,
       &.play-list-leave-to
         transform translateY(100%)
@@ -304,7 +356,8 @@ export default {
           i
             font-size 25px
         &:nth-child(3)
-          color #d3d3d3
+          pointer-events none
+          color rgba(0,0,0,0.5)
           i
             font-size 38px
     .lyric-and-circle

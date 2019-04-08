@@ -1,4 +1,5 @@
 import Song from 'common/js/song/song'
+
 let actions = {
   addSong (context, item) {
     if (!(item instanceof Song)) {
@@ -12,7 +13,7 @@ let actions = {
     if (repeat !== -1) {
       preList.splice(repeat, 1)
     }
-    preList.unshirt(item)
+    preList.unshift(item)
     context.commit('SET_PLAYLIST', preList)
   },
 
