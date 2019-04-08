@@ -1,6 +1,6 @@
 <template>
   <transition name = 'music'>
-    <div v-show = 'this.ifShowPlayer' class = 'container'>
+    <div v-show = 'this.ifShowPlayer' class = 'container' @click = 'handlePlayList'>
       <div class = 'header'>
         <div class = 'iconback' @click = 'clickFunc1'>
           <i class = 'iconfont'>&#xe644;</i>
@@ -57,7 +57,7 @@
         <li>
           <i class = 'iconfont'>&#xe612;</i>
         </li>
-        <li>
+        <li @click = 'handlePlayList' class = 'playListButton'>
           <i class = 'iconfont'>&#xe663;</i>
         </li>
       </ul>
@@ -65,6 +65,20 @@
        @timeupdate = 'timeUpdate'
       ></audio>
       <tip :flag = 'tipFlag' :string = '"vip音乐请到官方app聆听"'></tip>
+      <div class = 'background-c' v-show = 'playListFlag'></div>
+      <transition name = 'play-list'>
+        <div class = 'playList' v-show = 'playListFlag'>
+          <div class = 'play-list-top'>
+            <div>
+              <i></i>
+            </div>
+            <span></span>
+            <div>
+              <i></i>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -82,7 +96,8 @@ export default {
       duration: 0,
       currentTime: 0,
       lastSong: null,
-      tipFlag: false
+      tipFlag: false,
+      playListFlag: false
     }
   },
   components: {
@@ -110,6 +125,14 @@ export default {
     }
   },
   methods: {
+    handlePlayList (e) {
+      if (e.target.className !== 'playListButton' && e.target.parentElement.className !== 'playListButton') {
+        this.playListFlag = false
+      } else if (!this.playListFlag) {
+        this.playListFlag = true
+        e.stopPropagation()
+      }
+    },
     playButton () {
       if (!this.musicPlayState) {
         this.changePlayState(true)
@@ -218,6 +241,30 @@ export default {
     right 0
     bottom 0
     background-image linear-gradient(to bottom,#747474,#868686,#747474,#595959,#404040)
+    .background-c
+      background-color rgba(0,0,0,0.5)
+      position fixed
+      top 0
+      left 0
+      right 0
+      bottom 0
+      z-index 29
+    .playList
+      position absolute
+      left 0
+      right 0
+      bottom 0
+      max-height 300px
+      min-height 150px
+      background-color #fff
+      z-index 30
+      border-radius 12px 12px 0 0
+      &.play-list-enter,
+      &.play-list-leave-to
+        transform translateY(100%)
+      &.play-list-enter-active,
+      &.play-list-leave-active
+        transition transform 0.3s
     .bar-wrapper
       display flex
       width 90%

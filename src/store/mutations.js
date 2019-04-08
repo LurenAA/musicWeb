@@ -15,6 +15,9 @@ let mutations = {
   },
   [type.CHANGE_MUSICPLAYSTATE] (state, param) {
     state.musicPlayState = param
+  },
+  [type.SET_PLAYLIST] (state, param) {
+    state.playList = param
   }
 }
 

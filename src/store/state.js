@@ -2,7 +2,8 @@ var state = {
   mv: null,
   ifShowPlayer: false,
   song: {},
-  musicPlayState: false
+  musicPlayState: false,
+  playList: []
 }
 
 export default state
