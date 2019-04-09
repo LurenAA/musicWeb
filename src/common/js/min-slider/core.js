@@ -86,7 +86,7 @@ export default function coreMixin (MScroll) {
     this._initial = false
     this.isInTransition = false
     let timeDif = +new Date() - this.startTime
-    if (Math.abs(this.x - this.startX) < 3 && Math.abs(this.y - this.startY) < 3 && timeDif < 100) {
+    if (Math.abs(this.x - this.startX) < 5 && Math.abs(this.y - this.startY) < 5 && timeDif < 100) {
       // console.log('click')
       this._dispatchClick(e)
       return

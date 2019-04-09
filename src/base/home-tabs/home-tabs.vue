@@ -7,7 +7,7 @@
       <span>歌手</span>
     </router-link>
     <router-link tag = 'li' to = '/home/toplist'>
-      <span>排行榜</span>
+      <span>歌单</span>
     </router-link>
     <router-link tag = 'li' to = '/home/mv'>
       <span>MV</span>

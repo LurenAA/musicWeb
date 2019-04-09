@@ -59,6 +59,12 @@ export default {
       default: function () {
         return ''
       }
+    },
+    backIcon: {
+      type: String,
+      default: function () {
+        return 'home-recommend'
+      }
     }
   },
   computed: {
@@ -112,7 +118,7 @@ export default {
       }, 2000)
     },
     back () {
-      this.$router.push({name: 'home-page'})
+      this.$router.push({name: this.backIcon})
     },
     autoHideControl () {
       if (this.controlTimer) {
@@ -208,6 +214,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+  .video-container >>> .videoBox
+    z-index -1
   @import '~common/css/variable'
   @keyframes rota {
     from {

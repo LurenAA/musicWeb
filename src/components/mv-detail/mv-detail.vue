@@ -1,7 +1,7 @@
 <template>
   <transition>
     <div class = 'container'>
-      <video-player :url = 'mvUrl' @changeUrl = 'changeMvUrl'></video-player>
+      <video-player :url = 'mvUrl' @changeUrl = 'changeMvUrl' :backIcon = 'backIcon'></video-player>
       <div class = 'des' v-if = 'mv' ref = 'des'>
         <div>
           <div class = 'title-div'>
@@ -67,7 +67,11 @@ export default {
     ])
   },
   beforeRouteEnter (to, from, next) {
-    from.path === '/' ? next({name: 'home-page'}) : next()
+    from.path === '/' ? next({name: 'home-page'}) : next(
+      vm => {
+        vm.backIcon = from.name === 'home-mv' ? 'home-mv' : 'home-recommend'
+      }
+    )
   },
   updated () {
     this.$nextTick(() => {
@@ -98,7 +102,8 @@ export default {
       relevantMv: [],
       releventFlag: false,
       lastVid: '',
-      redirectFlag: false
+      redirectFlag: false,
+      backIcon: 'home-recommend'
     }
   },
   methods: {

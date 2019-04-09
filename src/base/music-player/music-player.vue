@@ -165,6 +165,12 @@ export default {
     ]),
     playButton () {
       if (!this.musicPlayState) {
+        if (navigator.userAgent.indexOf('UCBrowser') !== -1 && !this.ucflag) {
+          console.log('uc')
+          this.ucflag = true
+          this.$refs.audio.play()
+          return
+        }
         this.changePlayState(true)
         this.addSong(this.song)
       } else {
@@ -188,10 +194,6 @@ export default {
       this.$set(this, 'currentTime', e.target.currentTime)
       this.$refs.playbtn.style['pointer-events'] = 'auto'
       this.$refs.playbtn.style['color'] = '#d3d3d3'
-      if (navigator.userAgent.indexOf('UCBrower') !== -1) {
-        console.log('uc')
-        this.$refs.audio.play()
-      }
       // console.log('canplay', e.target.duration, this.song.int)
       // e.target.play()
     },
@@ -259,8 +261,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  .container >>> .videoBox
-    z-index -1
   @import '~common/css/index'
   @keyframes rota {
     from {
