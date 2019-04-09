@@ -98,7 +98,7 @@
             <p class = 'play-count'>播放次数：{{ item.playcnt}}</p>
           </li>
         </ul>
-        <see-more></see-more>
+        <see-more @emitClick = 'gotoMvPage'></see-more>
       </div>
     </div>
     <transition name = 'showload' type = 'transition'>
@@ -187,6 +187,9 @@ export default {
     loading
   },
   methods: {
+    gotoMvPage () {
+      this.$router.push({name: 'home-mv'})
+    },
     _initRecomList (base, target) {
       let numList = []
       for (let i = 0; i < 4; i++) {
@@ -209,8 +212,10 @@ export default {
       }
     },
     seeMvDetail (item) {
-      this.changeMv(item)
-      this.changePlayState(false)
+      setTimeout(function () {
+        this.changeMv(item)
+        this.changePlayState(false)
+      }.bind(this), 600)
       this.$router.push({name: 'mv-detail-page', params: {id: item.vid}})
     },
     ...mapMutations({

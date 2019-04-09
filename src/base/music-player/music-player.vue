@@ -73,19 +73,21 @@
               <i class = 'iconfont'>&#xe66d;</i>
             </div>
             <span>顺序播放</span>
-            <div>
+            <div @click = 'removeAll'>
               <i class = 'iconfont'>&#xe6be;</i>
             </div>
           </div>
-          <transition-group tag = 'ul' class = 'play-list-list'>
-            <li v-for = 'item in playList' :key = 'item.mid'>
-              <span>{{item.name}}</span>
-              <span>&nbsp;-&nbsp;{{item.singer}}</span>
-              <div>
-                <i class = 'iconfont'>&#xe687;</i>
-              </div>
-            </li>
-          </transition-group>
+          <div class = 'ul-wrapper' ref = 'wrapper'>
+            <transition-group tag = 'ul' class = 'play-list-list' name="plist">
+              <li v-for = 'item in playList' :key = 'item.mid'>
+                <span :class = '{"active-song": song.mid === item.mid}' @click="chooseAnother(item)">{{item.name}}</span>
+                <span :class = '{"active-song": song.mid === item.mid}' @click="chooseAnother(item)">&nbsp;-&nbsp;{{item.singer}}</span>
+                <div @click = 'removeOnsMusic(item)'>
+                  <i class = 'iconfont'>&#xe687;</i>
+                </div>
+              </li>
+            </transition-group>
+          </div>
         </div>
       </transition>
     </div>
@@ -98,13 +100,14 @@ import progressBar from 'base/progress-bar/progress-bar'
 import { formatTime } from 'common/js/util/util'
 import json from 'api/json.js'
 import tip from 'base/false-tip/false-tip'
+import MScroll from 'common/js/min-slider/index'
+
 export default {
   name: 'music-page',
   data: function () {
     return {
       duration: 0,
       currentTime: 0,
-      lastSong: null,
       tipFlag: false,
       playListFlag: false
     }
@@ -135,24 +138,34 @@ export default {
     }
   },
   methods: {
+    removeAll () {
+      this.changePlayList([])
+    },
+    removeOnsMusic (item) {
+      this.removeSong(item.mid)
+    },
+    chooseAnother (item) {
+      this.chooseMusic(item)
+    },
     handlePlayList (e) {
       if (e.target.className !== 'playListButton' && e.target.parentElement.className !== 'playListButton') {
         this.playListFlag = false
       } else if (!this.playListFlag) {
         this.playListFlag = true
+        setTimeout(function () {
+          this.scroll.refresh()
+        }.bind(this), 500)
         e.stopPropagation()
       }
     },
     ...mapActions([
-      'addSong'
+      'addSong',
+      'chooseMusic',
+      'removeSong'
     ]),
     playButton () {
       if (!this.musicPlayState) {
         this.changePlayState(true)
-        if (navigator.userAgent.indexOf('UCBrower') !== -1) {
-          this.changePlayState(false)
-          return
-        }
         this.addSong(this.song)
       } else {
         this.changePlayState(false)
@@ -167,13 +180,18 @@ export default {
     ...mapMutations({
       changeShow: 'CHANGE_IFSHOWPLAYER',
       setSongUrl: 'SET_SONGURL',
-      changePlayState: 'CHANGE_MUSICPLAYSTATE'
+      changePlayState: 'CHANGE_MUSICPLAYSTATE',
+      changePlayList: 'SET_PLAYLIST'
     }),
     handleCanplay (e) {
       this.$set(this, 'duration', parseInt(e.target.duration) || parseInt(this.song.int))
       this.$set(this, 'currentTime', e.target.currentTime)
       this.$refs.playbtn.style['pointer-events'] = 'auto'
       this.$refs.playbtn.style['color'] = '#d3d3d3'
+      if (navigator.userAgent.indexOf('UCBrower') !== -1) {
+        console.log('uc')
+        this.$refs.audio.play()
+      }
       // console.log('canplay', e.target.duration, this.song.int)
       // e.target.play()
     },
@@ -182,6 +200,31 @@ export default {
     },
     hideControl (e) {
       this.$refs.audio.currentTime = e * this.duration
+    },
+    changeSong (newVal, oldVal) {
+      setTimeout(function () {
+        this.$refs.playbtn.style['pointer-events'] = 'none'
+        this.$refs.playbtn.style['color'] = 'rgba(0,0,0,0.5)'
+        if (newVal.mid !== oldVal.mid) {
+          let _this = this
+          this.tipFlag = false
+          json(`http://132.232.249.69:3000/home/song?mid=${this.song.mid}`, 'GET').then(res => {
+            _this.setSongUrl(res)
+            // console.log('startLoad')
+            _this.changePlayState(false)
+            _this.$refs.audio.load()
+            _this.$refs.audio.currentTime = 0
+          })
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() => {
+            if (this.$refs.audio.readyState === 0) {
+              this.tipFlag = true
+            }
+          }, 1300)
+        }
+      }.bind(this), 200)
     }
   },
   watch: {
@@ -201,34 +244,23 @@ export default {
         this.$refs.circle.style.left = (window.innerWidth - parseInt(this.$refs.circle.style.width) - 18) / 2 + 'px'
         // }.bind(this), 10)
       }
-      setTimeout(function () {
-        if (newVal && (!this.lastSong || this.lastSong.mid !== this.song.mid)) {
-          let _this = this
-          this.tipFlag = false
-          json(`http://132.232.249.69:3000/home/song?mid=${this.song.mid}`, 'GET').then(res => {
-            _this.setSongUrl(res)
-            _this.lastSong = _this.song
-            // console.log('startLoad')
-            _this.changePlayState(false)
-            _this.$refs.audio.load()
-            _this.$refs.audio.currentTime = 0
-          })
-          if (this.timer) {
-            clearTimeout(this.timer)
-          }
-          this.timer = setTimeout(() => {
-            if (this.$refs.audio.readyState === 0) {
-              this.tipFlag = true
-            }
-          }, 1300)
-        }
-      }.bind(this), 200)
+    },
+    song (newVal, oldVal) {
+      this.changeSong(newVal, oldVal)
     }
+  },
+  mounted () {
+    this.scroll = new MScroll(this.$refs.wrapper, {
+      scrollY: true,
+      dispatchClick: true
+    })
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+  .container >>> .videoBox
+    z-index -1
   @import '~common/css/index'
   @keyframes rota {
     from {
@@ -274,29 +306,47 @@ export default {
       left 0
       right 0
       bottom 0
-      max-height 300px
-      min-height 150px
+      min-height 50px
       background-color #fff
       z-index 30
       border-radius 12px 12px 0 0
-      .play-list-list
-        padding 0 10px
-        li
-          height 40px
-          line-height 40px
-          display flex
-        span
-          &:first-child
-            font-size 14px
-
-          &:nth-child(2)
-            font-size 12px
-            flex 1
-            color rgba(0,0,0,0.55)
-        div
-          i
-            color rgba(0,0,0,0.55)
-            font-size 20px
+      .ul-wrapper
+        position relative
+        max-height 300px
+        overflow hidden
+        .play-list-list
+          padding 0 10px
+          .active-song
+            color #FF2400 !important
+          .plist-enter,
+          .plist-leave-to
+            height 0px
+          .plist-enter-active,
+          .plist-leave-active
+            transition all 0.3s
+          li
+            height 40px
+            line-height 40px
+            display flex
+          span
+            &:first-child
+              font-size 14px
+              max-width 150px
+              overflow hidden
+              text-overflow ellipsis
+              white-space nowrap
+            &:nth-child(2)
+              font-size 12px
+              flex 1
+              color rgba(0,0,0,0.55)
+              overflow hidden
+              text-overflow ellipsis
+              white-space nowrap
+              padding-right 50px
+          div
+            i
+              color rgba(0,0,0,0.55)
+              font-size 20px
       .play-list-top
         height 30px
         line-height 30px

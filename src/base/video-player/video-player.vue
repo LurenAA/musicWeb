@@ -174,7 +174,7 @@ export default {
     }
   },
   deactivated () {
-    this.$refs.video.removeEventListener('error', this)
+    // this.$refs.video.removeEventListener('error', this)
     if (this.timer) {
       clearTimeout(this.timer)
     }
@@ -183,14 +183,16 @@ export default {
     }
   },
   activated () {
-    if (!this.mv) {
-      this.showControl = false
-      return
-    }
-    this.$refs.video.addEventListener('error', this)
-    this.$refs.video.addEventListener('canplay', this)
-    this.mvInfo = this.mv
-    this.showControl = true
+    setTimeout(function () {
+      if (!this.mv) {
+        this.showControl = false
+        return
+      }
+      // this.$refs.video.addEventListener('error', this)
+      this.$refs.video.addEventListener('canplay', this)
+      this.mvInfo = this.mv
+      this.showControl = true
+    }.bind(this), 600)
   },
   data () {
     return {

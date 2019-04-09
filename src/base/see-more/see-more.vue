@@ -1,5 +1,5 @@
 <template>
-  <div class ='more-recom'>
+  <div class ='more-recom' @click = 'emitClick'>
     查看全部
     <i class = 'iconfont'>
       &#xe727;
@@ -9,7 +9,12 @@
 
 <script>
 export default {
-  name: 'see-more'
+  name: 'see-more',
+  methods: {
+    emitClick () {
+      this.$emit('emitClick')
+    }
+  }
 }
 </script>
 
