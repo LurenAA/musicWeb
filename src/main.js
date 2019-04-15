@@ -6,14 +6,14 @@ import router from './router'
 import lazyLoad from './common/js/lazy-load/index'
 import store from './store/index'
 import 'babel-polyfill'
-import VConsole from 'vconsole'
+// import VConsole from 'vconsole'
 import storage from 'common/js/storejs/store'
 
 import 'common/css/reset.css'
 import 'common/css/icons.styl'
 
-/* eslint-disable no-unused-vars */
-let vconsole = new VConsole()
+// /* eslint-disable no-unused-vars */
+// let vconsole = new VConsole()
 Vue.config.productionTip = false
 
 Vue.use(lazyLoad, {

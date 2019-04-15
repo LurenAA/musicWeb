@@ -36,6 +36,7 @@
         </li>
       </ul>
     </div>
+    <loading v-show = 'loading'></loading>
   </div>
 </template>
 
@@ -44,9 +45,13 @@ import json from 'api/json.js'
 import MScroll from 'common/js/min-slider/index'
 import { sliceSingersName } from 'common/js/util/util'
 import { mapMutations } from 'vuex'
+import loading from 'base/loading/loading'
 
 export default {
   name: 'mv',
+  components: {
+    loading
+  },
   methods: {
     caculateWidth: function (ele) {
       let children = ele.children
@@ -58,9 +63,11 @@ export default {
       ele.style.width = width + 'px'
     },
     getPageInfo () {
+      this.loading = true
       json(`http://132.232.249.69:3000/home/homeMv?version_id=${this.version[this.curVersion].id}&area_id=${this.area[this.curArea].id}`, 'GET').then(res => {
         res = JSON.parse(res)
         this.list = res['mv_list'].data.list
+        this.loading = false
       }).catch((err) => {
         console.log(err)
       })
@@ -95,6 +102,7 @@ export default {
         this.area = res['mv_tag'].data.area
         this.version = res['mv_tag'].data.version
         this.list = res['mv_list'].data.list
+        this.loading = false
         setTimeout(function () {
           this.caculateWidth(this.$refs.ulOne)
           this.caculateWidth(this.$refs.ulSec)
@@ -122,7 +130,8 @@ export default {
       version: [],
       curArea: 0,
       curVersion: 0,
-      list: []
+      list: [],
+      loading: true
     }
   },
   watch: {

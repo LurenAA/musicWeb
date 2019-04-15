@@ -82,7 +82,7 @@
             </div>
           </li>
         </ul>
-        <see-more></see-more>
+        <see-more @emitClick = 'gotoListPage'></see-more>
       </div>
       <div class = 'mv-list'>
         <recom-head name = 'MV推荐' @click="_initRecomList(theMvList,mvList)"></recom-head>
@@ -187,6 +187,9 @@ export default {
     loading
   },
   methods: {
+    gotoListPage () {
+      this.$router.push({name: 'home-toplist'})
+    },
     gotoMvPage () {
       this.$router.push({name: 'home-mv'})
     },
