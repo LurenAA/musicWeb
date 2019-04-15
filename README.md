@@ -1,6 +1,10 @@
 # vue-music
 
-> 为了薪火杯比赛用
+QQ音乐第三方
+
+使用vue，已经实现音乐播放与mv播放功能。
+
+
 
 ## Build Setup
 
