@@ -10,6 +10,7 @@ const musicPage = () => import('components/music-page/music-page')
 const userPage = () => import('components/user-page/user-page')
 const MvDatail = () => import('components/mv-detail/mv-detail')
 const distDatail = () => import('components/dist-detail/dist-detail')
+const singerDatail = () => import('components/singer-detail/singer-detail')
 
 Vue.use(Router)
 
@@ -69,6 +70,11 @@ let router = new Router({
       path: '/distDetail/:id',
       name: 'dist-detail-page',
       component: distDatail
+    },
+    {
+      path: '/singerDetail/:id',
+      name: 'singer-detail-page',
+      component: singerDatail
     }
   ]
 })

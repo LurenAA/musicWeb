@@ -3,7 +3,8 @@ var state = {
   ifShowPlayer: false,
   song: {},
   musicPlayState: false,
-  playList: []
+  playList: [],
+  singer: {}
 }
 
 export default state

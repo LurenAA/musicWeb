@@ -28,7 +28,7 @@
       <ul>
         <li v-for = '(item, index) in list' :key = 'index' @click = 'seeMvDetail(item)'>
           <div class = 'img-wrapper'>
-            <img :src="item.picurl">
+            <img v-lazy="item.picurl">
           </div>
           <h1>{{ item.title }}</h1>
           <p class = 'mem-sin'>{{ sliceSingersName(item.singers) }}</p>

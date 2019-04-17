@@ -5,97 +5,73 @@
         <div class = 'icon-back' @click = 'returnBack'>
           <i class = 'iconfont'>&#xe644;</i>
         </div>
-        <h1>{{ this.title }}</h1>
+        <h1>{{ this.singer.singer_name }}</h1>
       </header>
       <div class="showImg">
-        <img :src = 'this.logo'>
+        <img :src = 'this.singer.singer_pic'>
       </div>
-      <loading v-show = 'showflag'></loading>
       <div class = 'list' ref = 'list'>
         <ul>
-          <li v-for = '(item, index) in songlist' :key = 'index' @click = 'chooseSong(item)'>
+          <li v-for = '(item, index) in list' :key = 'index' @click = 'chooseSong(item)'>
             <div class = 'img-div'>
-              <img v-lazy = 'getImgUrl(item.albummid)'>
+              <img v-lazy = 'getImgUrl(item.musicData.albummid)'>
             </div>
             <div class = 'img-des'>
-              <span class = 'songName'>{{ item.songname }}</span>
-              <span class = 'songDes'>{{ sliceSingersName(item.singer)}}</span>
+              <span class = 'songName'>{{ item.musicData.songname }}</span>
+              <span class = 'songDes'>{{ sliceSingersName(item.musicData.singer)}}</span>
             </div>
           </li>
         </ul>
       </div>
+      <loading v-show = 'showflag'></loading>
     </div>
   </transition>
 </template>
 
 <script>
-import loading from 'base/loading/loading'
-import json from 'api/json.js'
-import { mapMutations } from 'vuex'
-import MScroll from 'common/js/min-slider/index'
+import { mapGetters, mapMutations } from 'vuex'
 import { sliceSingersName } from 'common/js/util/util'
+import json from 'api/json.js'
+import MScroll from 'common/js/min-slider/index'
+import loading from 'base/loading/loading'
 import Song from 'common/js/song/song'
+
 export default {
-  name: 'dist',
+  name: 'singer-detail',
+  components: {
+    loading
+  },
   mounted () {
     this.$nextTick(() => {
       this.$refs.list.style.top = (window.innerWidth * 0.7) + 'px'
-    })
-    setTimeout(() => {
-      this.scrollY = new MScroll(this.$refs.list, {
-        loop: false,
-        slider: false,
-        scrollX: false,
-        scrollY: true,
-        dispatchClick: true
-      })
-    }, 200)
-  },
-  activated () {
-    json(`http://132.232.249.69:3000/home/dist?vid=${this.$route.params.id}`, 'GET').then(res => {
-      res = JSON.parse(res).cdlist[0]
-      this.scrollY.scrollTo(0, 0, '', true)
-      this.title = res.dissname
-      this.logo = res.logo
-      this.songlist = res.songlist
-      // console.log(res)
       setTimeout(() => {
-        this.showflag = false
-        this.scrollY.refresh()
-      }, 0)
+        this.scrollY = new MScroll(this.$refs.list, {
+          loop: false,
+          slider: false,
+          scrollX: false,
+          scrollY: true,
+          dispatchClick: true
+        })
+      }, 200)
     })
-  },
-  deactivated () {
-    this.title = ''
-    this.logo = ''
-    this.showflag = true
-    this.songlist = []
-  },
-  data () {
-    return {
-      title: '',
-      logo: '',
-      showflag: true,
-      songlist: []
-    }
   },
   methods: {
     returnBack () {
       this.$router.go(-1)
     },
-    getImgUrl (mid) {
-      return `http://y.gtimg.cn/music/photo_new/T002R90x90M000${mid}.jpg?max_age=2592000`
-    },
     sliceSingersName (i) {
       return sliceSingersName(i)
     },
+    getImgUrl (mid) {
+      return `http://y.gtimg.cn/music/photo_new/T002R90x90M000${mid}.jpg?max_age=2592000`
+    },
     chooseSong (item) {
       let newSong = new Song({
-        name: item.songname,
-        mid: item.songmid,
-        pic: this.getImgUrl(item.albummid),
-        singer: sliceSingersName(item.singer),
-        int: item.interval
+        name: item.musicData.songname,
+        mid: item.musicData.songmid,
+        pic: this.getImgUrl(item.musicData.albummid),
+        singer: sliceSingersName(item.musicData.singer),
+        int: item.musicData.interval
       })
       this.setSong(newSong)
       this.showFlag(true)
@@ -105,8 +81,35 @@ export default {
       showFlag: 'CHANGE_IFSHOWPLAYER'
     })
   },
-  components: {
-    loading
+  computed: {
+    ...mapGetters([
+      'singer'
+    ])
+  },
+  activated () {
+    setTimeout(() => {
+      json(`http://132.232.249.69:3000/home/singerdetail?vid=${this.singer.singer_mid}`, 'GET').then(res => {
+        res = JSON.parse(res)
+        console.log(res)
+        // this.list = res.data.list
+        this.$set(this, 'list', res.data.list)
+        setTimeout(() => {
+          this.showflag = false
+          this.scrollY.refresh()
+          this.scrollY.scrollTo(0, 0, '', true)
+        }, 0)
+      })
+    }, 0)
+  },
+  deactivated () {
+    this.list = []
+    this.showflag = true
+  },
+  data () {
+    return {
+      list: [],
+      showflag: true
+    }
   }
 }
 </script>
@@ -129,6 +132,14 @@ export default {
     left 0
     right 0
     bottom 0
+    .showImg
+      width 100%;
+      padding-bottom 70%;
+      height 0
+      overflow hidden
+      border-radius 0 0 4px 4px
+      img
+        width 100%
     .list
       position fixed
       bottom 0
@@ -161,14 +172,6 @@ export default {
             width 65px
             height 65px
             overflow hidden
-    .showImg
-      width 100%;
-      padding-bottom 70%;
-      height 0
-      overflow hidden
-      border-radius 0 0 4px 4px
-      img
-        width 100%
     .header
       position absolute
       top 0
@@ -180,7 +183,7 @@ export default {
       text-align center
       h1
         font-size 16px
-        color #fff
+        color #8a53e4
       .icon-back
         position absolute
         left 0
@@ -189,5 +192,5 @@ export default {
         align-items center;
         i
           font-size 24px;
-          color #fff
+          color #8a53e4
 </style>

@@ -3,7 +3,7 @@
     <ul class = 'content'>
       <li v-for = "(item, index) in recomPlaylist" :key = 'index' @click = 'gotoDis(item)'>
         <div class = 'img-div'>
-          <img :src = 'item.cover'>
+          <img v-lazy = 'item.cover'>
         </div>
         <div class = 'des'>
           <h1>{{ item.title }}</h1>
@@ -78,12 +78,12 @@ export default {
           padding-left 15px;
           h1
             font-size 16px
-            margin-bottom 6px;
+            margin-bottom 8px;
           h2,
           h3
             font-size 14px;
             color #999
-            margin-bottom 4px;
+            margin-bottom 6px;
         .img-div
           flex-shrink 0
           flex-grow 0

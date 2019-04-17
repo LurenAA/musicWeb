@@ -3,7 +3,8 @@ let getters = {
   ifShowPlayer: state => state.ifShowPlayer,
   song: state => state.song,
   musicPlayState: state => state.musicPlayState,
-  playList: state => state.playList
+  playList: state => state.playList,
+  singer: state => state.singer
 }
 
 export default getters
